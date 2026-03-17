@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MayaVizs</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --white:       #ffffff;
+  --bg:          #fafaf9;
+  --coral:       #e8694a;
+  --coral-d:     #d05535;
+  --coral-lt:    #f4937a;
+  --coral-pale:  #fdf0ec;
+  --peach:       #f5c4a8;
+  --peach-pale:  #fef7f3;
+  --text:        #1a1a1a;
+  --text-2:      #555555;
+  --text-3:      #999999;
+  --line:        #ebebeb;
+  --input-bg:    #f7f7f6;
+  --green:       #3a9e6a;
+  --green-pale:  #edf8f2;
+  --radius:      12px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+.wrap {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+/* ── Brand ── */
+.brand {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 32px;
+}
+.brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--coral); }
+.brand-name { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.03em; }
+
+/* ── Auth screens ── */
+.screen { display: none; }
+.screen.active { display: block; animation: up 0.4s ease both; }
+
+.screen-title {
+  font-size: 22px; font-weight: 600;
+  letter-spacing: -0.03em; color: var(--text);
+  margin-bottom: 6px;
+}
+.screen-sub {
+  font-size: 13.5px; color: var(--text-2);
+  font-weight: 300; margin-bottom: 28px; line-height: 1.6;
+}
+
+.field { margin-bottom: 14px; }
+.field-label {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--text-2); margin-bottom: 7px;
+}
+
+input[type="email"], input[type="password"], input[type="text"] {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px; font-weight: 300;
+  color: var(--text); outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input:focus {
+  border-color: var(--coral-lt);
+  box-shadow: 0 0 0 3px rgba(232,105,74,0.12);
+  background: var(--white);
+}
+
+input::placeholder { color: var(--text-3); }
+
+.btn {
+  width: 100%; padding: 13px;
+  border-radius: var(--radius);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+  border: none;
+}
+
+.btn-coral {
+  background: var(--coral); color: #fff;
+  box-shadow: 0 4px 14px rgba(232,105,74,0.22);
+}
+.btn-coral:hover:not(:disabled) { background: var(--coral-d); transform: translateY(-1px); }
+.btn-coral:disabled { background: var(--peach); cursor: not-allowed; transform: none; }
+
+.btn-outline {
+  background: none; color: var(--text-2);
+  border: 1.5px solid var(--line) !important;
+  margin-top: 10px;
+}
+.btn-outline:hover { border-color: var(--text-3) !important; color: var(--text); }
+
+.auth-switch {
+  text-align: center; margin-top: 20px;
+  font-size: 13px; color: var(--text-3);
+}
+.auth-switch a {
+  color: var(--coral); text-decoration: none; font-weight: 500; cursor: pointer;
+}
+.auth-switch a:hover { text-decoration: underline; }
+
+.msg {
+  padding: 11px 14px; border-radius: 9px;
+  font-size: 13px; line-height: 1.55;
+  margin-bottom: 16px; display: none;
+}
+.msg.show { display: block; }
+.msg.error { background: #fef4f4; border: 1px solid #f0c0c0; color: #c05050; }
+.msg.success { background: var(--green-pale); border: 1px solid #b0dfc0; color: var(--green); }
+.msg.info { background: var(--coral-pale); border: 1px solid #f4c0a8; color: #b05030; }
+
+hr { border: none; border-top: 1px solid var(--line); margin: 24px 0; }
+
+/* ── User bar ── */
+.user-bar {
+  display: none;
+  align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+  gap: 12px;
+}
+.user-bar.show { display: flex; }
+.user-email { font-size: 12.5px; color: var(--text-2); font-weight: 400; }
+.user-plan {
+  font-size: 11px; font-weight: 600;
+  padding: 3px 9px; border-radius: 20px;
+  background: var(--coral-pale); color: var(--coral);
+}
+.user-plan.paid { background: var(--green-pale); color: var(--green); }
+.user-usage { font-size: 11.5px; color: var(--text-3); }
+.btn-logout {
+  background: none; border: none;
+  font-size: 12px; color: var(--text-3);
+  cursor: pointer; padding: 4px 8px;
+  border-radius: 6px; transition: all 0.15s;
+}
+.btn-logout:hover { background: var(--line); color: var(--text-2); }
+
+/* ── Generator ── */
+.label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 14px; }
+
+textarea, select {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  padding: 13px 15px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px; font-weight: 300;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none; appearance: none;
+  display: block;
+}
+
+textarea { min-height: 110px; resize: vertical; line-height: 1.65; margin-bottom: 10px; }
+textarea::placeholder { color: var(--text-3); font-weight: 300; }
+textarea:focus, select:focus {
+  border-color: var(--coral-lt);
+  box-shadow: 0 0 0 3px rgba(232,105,74,0.12);
+  background: var(--white);
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 13px center; padding-right: 34px; cursor: pointer;
+}
+select option { background: #fff; }
+
+.block { margin-bottom: 28px; }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 460px) { .row-2 { grid-template-columns: 1fr; } }
+
+.note { font-size: 11.5px; color: var(--text-3); margin-top: 9px; font-weight: 300; }
+
+/* ── Progress ── */
+.progress { display: none; margin-top: 28px; }
+.progress.show { display: block; animation: up 0.4s ease both; }
+.prog-title { font-size: 13px; font-weight: 500; color: var(--text-2); margin-bottom: 14px; }
+.steps { display: flex; flex-direction: column; gap: 2px; }
+.step {
+  display: flex; align-items: center; gap: 13px;
+  padding: 11px 14px; border-radius: 9px; transition: background 0.2s;
+}
+.step.active { background: var(--peach-pale); }
+.step.done   { background: var(--green-pale); }
+.step.err    { background: #fef4f4; }
+.s-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1.5px solid var(--line); background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; flex-shrink: 0; transition: all 0.2s;
+}
+.step.active .s-icon { border-color: var(--coral-lt); background: var(--coral-pale); animation: pulse 1.6s ease-in-out infinite; }
+.step.done   .s-icon { border-color: #74c49a; background: var(--green-pale); color: var(--green); font-weight: 600; }
+.step.err    .s-icon { border-color: #e89494; background: #fdeaea; color: #c05050; font-weight: 600; }
+.s-name { font-size: 13px; font-weight: 400; color: var(--text); }
+.s-note { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.step.active .s-name { color: var(--coral); }
+.step.done   .s-name { color: var(--green); }
+.step.err    .s-name { color: #c05050; }
+
+.err-box {
+  display: none; margin-top: 14px; padding: 12px 14px;
+  background: #fef4f4; border: 1px solid #f0c0c0;
+  border-radius: 9px; font-size: 13px; color: #c05050; line-height: 1.55;
+}
+.err-box.show { display: block; }
+
+/* ── Upgrade prompt ── */
+.upgrade-box {
+  display: none; margin-top: 14px; padding: 18px;
+  background: var(--coral-pale); border: 1.5px solid var(--coral-lt);
+  border-radius: var(--radius); text-align: center;
+}
+.upgrade-box.show { display: block; }
+.upgrade-box p { font-size: 13.5px; color: #a04030; margin-bottom: 14px; line-height: 1.6; }
+.btn-upgrade {
+  display: inline-block; padding: 11px 24px;
+  background: var(--coral); color: #fff;
+  border: none; border-radius: 9px;
+  font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 500;
+  cursor: pointer; transition: background 0.15s;
+}
+.btn-upgrade:hover { background: var(--coral-d); }
+
+/* ── Result ── */
+.result { display: none; margin-top: 28px; animation: up 0.4s ease both; }
+.result.show { display: block; }
+.result-top {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line); margin-bottom: 18px;
+}
+.result-icon {
+  width: 40px; height: 40px; background: var(--coral-pale);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.result-text h3 { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; margin-bottom: 3px; }
+.result-text p  { font-size: 12px; color: var(--text-3); font-weight: 300; }
+audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
+.result-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-dl {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 11px 18px; background: var(--coral); color: #fff;
+  border: none; border-radius: 9px;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+  text-decoration: none; cursor: pointer; transition: background 0.15s; min-width: 140px;
+}
+.btn-dl:hover { background: var(--coral-d); }
+.btn-new {
+  flex: 1; padding: 11px 18px;
+  background: var(--input-bg); color: var(--text-2);
+  border: 1.5px solid var(--line); border-radius: 9px;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 400;
+  cursor: pointer; transition: border-color 0.15s; min-width: 140px;
+}
+.btn-new:hover { border-color: var(--text-3); }
+
+/* ── Payment modal ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4); z-index: 100;
+  align-items: center; justify-content: center; padding: 24px;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--white); border-radius: 20px;
+  padding: 32px; max-width: 420px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  animation: up 0.3s ease both;
+}
+.modal h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
+.modal p  { font-size: 13.5px; color: var(--text-2); font-weight: 300; line-height: 1.6; margin-bottom: 20px; }
+.plan-box {
+  background: var(--coral-pale); border: 1.5px solid var(--coral-lt);
+  border-radius: var(--radius); padding: 18px; margin-bottom: 20px; text-align: center;
+}
+.plan-price { font-size: 2rem; font-weight: 700; letter-spacing: -0.04em; color: var(--text); }
+.plan-price span { font-size: 1rem; font-weight: 400; color: var(--text-2); }
+.plan-features { list-style: none; margin: 12px 0 0; display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.plan-features li { font-size: 13px; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+.plan-features li::before { content: '✓'; color: var(--coral); font-weight: 600; flex-shrink: 0; }
+.modal-actions { display: flex; flex-direction: column; gap: 8px; }
+.btn-cancel { background: none; border: none; font-size: 13px; color: var(--text-3); cursor: pointer; text-align: center; padding: 8px; }
+.btn-cancel:hover { color: var(--text-2); }
+
+@keyframes up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(232,105,74,0.4); } 50% { box-shadow: 0 0 0 6px rgba(232,105,74,0); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <div class="brand-name">MayaVizs</div>
+  </div>
+
+  <!-- User bar (shown when logged in) -->
+  <div class="user-bar" id="userBar">
+    <div>
+      <div class="user-email" id="userEmail"></div>
+      <div class="user-usage" id="userUsage"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="user-plan" id="userPlan">Free</span>
+      <button class="btn-logout" onclick="logout()">Log out</button>
+    </div>
+  </div>
+
+  <!-- Login screen -->
+  <div class="screen active" id="screenLogin">
+    <div class="screen-title">Welcome back</div>
+    <div class="screen-sub">Log in to generate your personalized guided session.</div>
+    <div class="msg error" id="loginErr"></div>
+    <div class="field">
+      <label class="field-label">Email</label>
+      <input type="email" id="loginEmail" placeholder="you@email.com"/>
+    </div>
+    <div class="field">
+      <label class="field-label">Password</label>
+      <input type="password" id="loginPassword" placeholder="Your password"/>
+    </div>
+    <button class="btn btn-coral" id="loginBtn" onclick="doLogin()" style="margin-top:6px;">Log in</button>
+    <div class="auth-switch">Don't have an account? <a onclick="showScreen('screenSignup')">Sign up free</a></div>
+  </div>
+
+  <!-- Signup screen -->
+  <div class="screen" id="screenSignup">
+    <div class="screen-title">Create your account</div>
+    <div class="screen-sub">Get 3 free sessions to start — no credit card needed.</div>
+    <div class="msg error" id="signupErr"></div>
+    <div class="msg success" id="signupOk"></div>
+    <div class="field">
+      <label class="field-label">Email</label>
+      <input type="email" id="signupEmail" placeholder="you@email.com"/>
+    </div>
+    <div class="field">
+      <label class="field-label">Password</label>
+      <input type="password" id="signupPassword" placeholder="At least 6 characters"/>
+    </div>
+    <button class="btn btn-coral" id="signupBtn" onclick="doSignup()" style="margin-top:6px;">Create account</button>
+    <div class="auth-switch">Already have an account? <a onclick="showScreen('screenLogin')">Log in</a></div>
+  </div>
+
+  <!-- Generator screen -->
+  <div class="screen" id="screenApp">
+
+    <div class="block">
+      <div class="label">Your intention</div>
+      <textarea id="goalInput" placeholder="Describe what you are going through or what you would like to work on. The more specific you are, the more personal your session will feel."></textarea>
+      <select id="focusArea">
+        <optgroup label="Calm &amp; Wellbeing">
+          <option value="anxiety">Anxiety &amp; stress relief</option>
+          <option value="sleep">Sleep &amp; rest</option>
+          <option value="mindfulness">Mindfulness meditation</option>
+          <option value="focus">Focus &amp; mental clarity</option>
+          <option value="burnout">Burnout &amp; exhaustion</option>
+        </optgroup>
+        <optgroup label="Emotional Healing">
+          <option value="healing">Emotional healing</option>
+          <option value="grief">Grief &amp; loss</option>
+          <option value="self_love">Self-love &amp; acceptance</option>
+          <option value="anger">Anger &amp; frustration release</option>
+        </optgroup>
+        <optgroup label="Relationships">
+          <option value="relationships">Relationships &amp; connection</option>
+          <option value="boundaries">Boundaries &amp; self-respect</option>
+        </optgroup>
+        <optgroup label="Growth &amp; Achievement">
+          <option value="confidence">Confidence &amp; self-belief</option>
+          <option value="goal">Goal achievement &amp; motivation</option>
+          <option value="abundance">Abundance &amp; prosperity</option>
+          <option value="creativity">Creativity &amp; flow state</option>
+          <option value="health">Health &amp; body vitality</option>
+        </optgroup>
+        <optgroup label="Other">
+          <option value="custom">Something else — based on my description</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="block">
+      <div class="label">Voice &amp; length</div>
+      <div class="row-2">
+        <select id="voiceSelect">
+          <option value="nova">Nova — warm &amp; friendly</option>
+          <option value="shimmer">Shimmer — gentle &amp; soft</option>
+          <option value="alloy">Alloy — clear &amp; balanced</option>
+          <option value="echo">Echo — calm &amp; grounded</option>
+          <option value="onyx">Onyx — deep &amp; authoritative</option>
+          <option value="fable">Fable — warm &amp; storytelling</option>
+        </select>
+        <select id="durationSelect">
+          <option value="3">3 minutes</option>
+          <option value="5" selected>5 minutes</option>
+          <option value="10">10 minutes</option>
+          <option value="15">15 minutes</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-coral" id="genBtn" onclick="generate()">Generate my session</button>
+
+    <!-- Progress -->
+    <div class="progress" id="progressWrap">
+      <div class="prog-title">Building your session…</div>
+      <div class="steps">
+        <div class="step" id="s1">
+          <div class="s-icon" id="si1">1</div>
+          <div class="s-text">
+            <div class="s-name">Writing your script</div>
+            <div class="s-note" id="sn1">GPT-4o-mini is personalizing your session…</div>
+          </div>
+        </div>
+        <div class="step" id="s2">
+          <div class="s-icon" id="si2">2</div>
+          <div class="s-text">
+            <div class="s-name">Synthesizing voice</div>
+            <div class="s-note" id="sn2">OpenAI TTS is generating your audio…</div>
+          </div>
+        </div>
+      </div>
+      <div class="err-box" id="errBox"></div>
+      <div class="upgrade-box" id="upgradeBox">
+        <p id="upgradeMsg">You've used all 3 free sessions. Upgrade to MayaVizs Plus for 30 sessions/month.</p>
+        <button class="btn-upgrade" onclick="showPaymentModal()">Upgrade — ₹299/month</button>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div class="result" id="resultWrap">
+      <div class="result-top">
+        <div class="result-icon">🎧</div>
+        <div class="result-text">
+          <h3>Your session is ready</h3>
+          <p id="resultSub">Personalized guided session</p>
+        </div>
+      </div>
+      <audio controls id="player"></audio>
+      <div class="result-actions">
+        <a class="btn-dl" id="dlBtn" download="mayavizs-session.mp3">↓ Download audio</a>
+        <button class="btn-new" onclick="resetGen()">← Start over</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Payment modal -->
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal">
+    <h3>Upgrade to Plus</h3>
+    <p>Get 30 sessions every month and full access to all voices and session lengths.</p>
+    <div class="plan-box">
+      <div class="plan-price">₹299<span>/month</span></div>
+      <ul class="plan-features">
+        <li>30 sessions per month</li>
+        <li>All voices &amp; durations</li>
+        <li>Download as MP3</li>
+        <li>Cancel anytime</li>
+      </ul>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-coral" id="payBtn" onclick="startPayment()">Pay ₹299 with Razorpay</button>
+      <button class="btn-cancel" onclick="hidePaymentModal()">Maybe later</button>
+    </div>
+    <div class="msg error" id="payErr" style="margin-top:12px;"></div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  // ── Replace with your Render backend URL ──
+  const BACKEND = "https://mayavizs.onrender.com";
+
+  // ── State ──────────────────────────────────────────────────────
+  let authToken = localStorage.getItem("maya_token") || null;
+  let userData  = null;
+
+  // ── Init ───────────────────────────────────────────────────────
+  window.addEventListener("DOMContentLoaded", () => {
+    if (authToken) loadUser();
+    else showScreen("screenLogin");
+  });
+
+  // ── Screen management ──────────────────────────────────────────
+  function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+  }
+
+  // ── User bar ───────────────────────────────────────────────────
+  function updateUserBar(data) {
+    userData = data;
+    const bar = document.getElementById("userBar");
+    bar.classList.add("show");
+    document.getElementById("userEmail").textContent = data.email;
+    document.getElementById("userUsage").textContent =
+      `${data.sessions_used} / ${data.sessions_limit} sessions used this month`;
+    const planEl = document.getElementById("userPlan");
+    planEl.textContent = data.plan === "paid" ? "Plus ✓" : "Free";
+    planEl.className   = "user-plan" + (data.plan === "paid" ? " paid" : "");
+  }
+
+  async function loadUser() {
+    try {
+      const res = await fetch(`${BACKEND}/auth/me`, {
+        headers: { "Authorization": `Bearer ${authToken}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        updateUserBar(data);
+        showScreen("screenApp");
+      } else {
+        logout();
+      }
+    } catch { logout(); }
+  }
+
+  // ── Auth ───────────────────────────────────────────────────────
+  async function doLogin() {
+    const email    = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    const errEl    = document.getElementById("loginErr");
+    const btn      = document.getElementById("loginBtn");
+
+    errEl.classList.remove("show");
+    if (!email || !password) { showMsg(errEl, "Please enter your email and password."); return; }
+
+    btn.disabled = true; btn.textContent = "Logging in…";
+
+    try {
+      const res  = await fetch(`${BACKEND}/auth/login`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        authToken = data.token;
+        localStorage.setItem("maya_token", authToken);
+        updateUserBar(data);
+        showScreen("screenApp");
+      } else {
+        showMsg(errEl, data.error || "Login failed.");
+      }
+    } catch { showMsg(errEl, "Could not reach server. Please try again."); }
+
+    btn.disabled = false; btn.textContent = "Log in";
+  }
+
+  async function doSignup() {
+    const email    = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value.trim();
+    const errEl    = document.getElementById("signupErr");
+    const okEl     = document.getElementById("signupOk");
+    const btn      = document.getElementById("signupBtn");
+
+    errEl.classList.remove("show"); okEl.classList.remove("show");
+    if (!email || !password) { showMsg(errEl, "Please enter your email and password."); return; }
+
+    btn.disabled = true; btn.textContent = "Creating account…";
+
+    try {
+      const res  = await fetch(`${BACKEND}/auth/signup`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showMsg(okEl, "Account created! Please check your email to verify, then log in.");
+        setTimeout(() => showScreen("screenLogin"), 2500);
+      } else {
+        showMsg(errEl, data.error || "Sign up failed.");
+      }
+    } catch { showMsg(errEl, "Could not reach server. Please try again."); }
+
+    btn.disabled = false; btn.textContent = "Create account";
+  }
+
+  function logout() {
+    authToken = null; userData = null;
+    localStorage.removeItem("maya_token");
+    document.getElementById("userBar").classList.remove("show");
+    showScreen("screenLogin");
+  }
+
+  function showMsg(el, msg) {
+    el.textContent = msg; el.classList.add("show");
+  }
+
+  // ── Generator ──────────────────────────────────────────────────
+  const ICONS = { 1:'1', 2:'2' };
+
+  function stepFn(n, state, note) {
+    const el = document.getElementById(`s${n}`);
+    const ic = document.getElementById(`si${n}`);
+    const nt = document.getElementById(`sn${n}`);
+    el.className = `step ${state}`;
+    ic.textContent = state === 'done' ? '✓' : state === 'err' ? '✗' : ICONS[n];
+    if (note) nt.textContent = note;
+  }
+
+  function showErr(msg, isUpgrade = false) {
+    document.getElementById("errBox").classList.remove("show");
+    document.getElementById("upgradeBox").classList.remove("show");
+    if (isUpgrade) {
+      document.getElementById("upgradeMsg").textContent = msg;
+      document.getElementById("upgradeBox").classList.add("show");
+    } else {
+      document.getElementById("errBox").textContent = msg;
+      document.getElementById("errBox").classList.add("show");
+    }
+    document.getElementById("genBtn").disabled = false;
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  async function generate() {
+    const goal     = document.getElementById("goalInput").value.trim();
+    const focus    = document.getElementById("focusArea").value;
+    const voice    = document.getElementById("voiceSelect").value;
+    const duration = parseInt(document.getElementById("durationSelect").value);
+
+    if (!goal || goal.length < 15) {
+      alert("Please describe your intention in a bit more detail."); return;
+    }
+
+    document.getElementById("genBtn").disabled = true;
+    document.getElementById("progressWrap").classList.add("show");
+    document.getElementById("resultWrap").classList.remove("show");
+    document.getElementById("errBox").classList.remove("show");
+    document.getElementById("upgradeBox").classList.remove("show");
+    [1,2].forEach(n => stepFn(n, '', ''));
+
+    stepFn(1, 'active', 'GPT-4o-mini is writing your session…');
+    await sleep(300);
+    stepFn(2, 'active', 'Queued…');
+
+    const timers = [
+      setTimeout(() => stepFn(1, 'active', 'Writing your grounding sequence…'), 3000),
+      setTimeout(() => stepFn(1, 'active', 'Crafting the core visualization…'), 7000),
+      setTimeout(() => { stepFn(1,'done','Done'); stepFn(2,'active','OpenAI TTS rendering your voice…'); }, 11000),
+      setTimeout(() => stepFn(2, 'active', 'Voice almost ready…'), 20000),
+    ];
+
+    try {
+      const res = await fetch(`${BACKEND}/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
+        body: JSON.stringify({ goal, focus, voice, duration }),
+      });
+
+      timers.forEach(clearTimeout);
+
+      if (res.status === 401) {
+        logout(); return;
+      }
+
+      if (res.status === 403) {
+        const data = await res.json();
+        [1,2].forEach(n => stepFn(n,'err',''));
+        showErr(data.error, data.upgrade_required);
+        return;
+      }
+
+      if (!res.ok) {
+        let msg = `Error ${res.status}`;
+        try { const j = await res.json(); msg = j.error || msg; } catch {}
+        [1,2].forEach(n => stepFn(n,'err',''));
+        showErr(msg); return;
+      }
+
+      [1,2].forEach(n => stepFn(n,'done','Complete'));
+
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      document.getElementById("player").src = url;
+      document.getElementById("dlBtn").href = url;
+      document.getElementById("resultSub").textContent =
+        `${duration}-minute personalized session · ready to play or download`;
+
+      // Refresh usage count
+      loadUser();
+
+      document.getElementById("progressWrap").classList.remove("show");
+      document.getElementById("resultWrap").classList.add("show");
+      document.getElementById("genBtn").disabled = false;
+      document.getElementById("resultWrap").scrollIntoView({ behavior: "smooth", block: "start" });
+
+    } catch(e) {
+      timers.forEach(clearTimeout);
+      [1,2].forEach(n => stepFn(n,'err',''));
+      showErr(`Could not reach the server. Please try again. (${e.message})`);
+    }
+  }
+
+  function resetGen() {
+    document.getElementById("resultWrap").classList.remove("show");
+    document.getElementById("progressWrap").classList.remove("show");
+    document.getElementById("errBox").classList.remove("show");
+    document.getElementById("upgradeBox").classList.remove("show");
+    document.getElementById("goalInput").value = "";
+    document.getElementById("genBtn").disabled = false;
+    [1,2].forEach(n => stepFn(n,'',''));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // ── Payment ────────────────────────────────────────────────────
+  function showPaymentModal() { document.getElementById("paymentModal").classList.add("show"); }
+  function hidePaymentModal() { document.getElementById("paymentModal").classList.remove("show"); }
+
+  async function startPayment() {
+    const btn   = document.getElementById("payBtn");
+    const errEl = document.getElementById("payErr");
+    errEl.classList.remove("show");
+    btn.disabled = true; btn.textContent = "Loading…";
+
+    try {
+      const res  = await fetch(`${BACKEND}/payment/create-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
+      });
+      const order = await res.json();
+
+      if (!res.ok) { showMsg(errEl, order.error || "Could not create order."); btn.disabled = false; btn.textContent = "Pay ₹299 with Razorpay"; return; }
+
+      const options = {
+        key:         order.key_id,
+        amount:      order.amount,
+        currency:    order.currency,
+        name:        "MayaVizs",
+        description: "MayaVizs Plus — 30 sessions/month",
+        order_id:    order.order_id,
+        prefill:     { email: order.user_email },
+        theme:       { color: "#e8694a" },
+        handler: async (response) => {
+          // Verify payment
+          const verRes = await fetch(`${BACKEND}/payment/verify`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
+            body: JSON.stringify(response),
+          });
+          const verData = await verRes.json();
+          if (verRes.ok) {
+            hidePaymentModal();
+            await loadUser();
+            alert("🎉 Welcome to MayaVizs Plus! You now have 30 sessions this month.");
+          } else {
+            showMsg(errEl, verData.error || "Payment verification failed. Contact support.");
+          }
+        },
+        modal: { ondismiss: () => { btn.disabled = false; btn.textContent = "Pay ₹299 with Razorpay"; } },
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+
+    } catch(e) {
+      showMsg(errEl, `Could not load payment. (${e.message})`);
+      btn.disabled = false; btn.textContent = "Pay ₹299 with Razorpay";
+    }
+  }
+
+  // Enter key support
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const active = document.querySelector(".screen.active");
+      if (active?.id === "screenLogin")  doLogin();
+      if (active?.id === "screenSignup") doSignup();
+    }
+  });
+</script>
+</body>
+</html>
