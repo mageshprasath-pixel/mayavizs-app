@@ -339,7 +339,7 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     </div>
   </div>
 
-  <!-- Login screen -->
+ <!-- Login screen -->
   <div class="screen active" id="screenLogin">
     <div class="screen-title">Welcome back</div>
     <div class="screen-sub">Log in to generate your personalized guided session.</div>
@@ -352,8 +352,25 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
       <label class="field-label">Password</label>
       <input type="password" id="loginPassword" placeholder="Your password"/>
     </div>
-    <button class="btn btn-coral" id="loginBtn" onclick="doLogin()" style="margin-top:6px;">Log in</button>
+    <div style="text-align:right; margin-bottom:14px;">
+      <a onclick="showScreen('screenForgot')" style="font-size:12.5px; color:var(--coral); cursor:pointer; text-decoration:none;">Forgot password?</a>
+    </div>
+    <button class="btn btn-coral" id="loginBtn" onclick="doLogin()">Log in</button>
     <div class="auth-switch">Don't have an account? <a onclick="showScreen('screenSignup')">Sign up free</a></div>
+  </div>
+
+  <!-- Forgot password screen -->
+  <div class="screen" id="screenForgot">
+    <div class="screen-title">Reset your password</div>
+    <div class="screen-sub">Enter your email and we'll send you a link to reset your password.</div>
+    <div class="msg error" id="forgotErr"></div>
+    <div class="msg success" id="forgotOk"></div>
+    <div class="field">
+      <label class="field-label">Email</label>
+      <input type="email" id="forgotEmail" placeholder="you@email.com"/>
+    </div>
+    <button class="btn btn-coral" id="forgotBtn" onclick="doForgotPassword()" style="margin-top:6px;">Send reset link</button>
+    <div class="auth-switch"><a onclick="showScreen('screenLogin')">← Back to login</a></div>
   </div>
 
   <!-- Signup screen -->
@@ -608,7 +625,33 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
 
     btn.disabled = false; btn.textContent = "Create account";
   }
+async function doForgotPassword() {
+    const email = document.getElementById("forgotEmail").value.trim();
+    const errEl = document.getElementById("forgotErr");
+    const okEl  = document.getElementById("forgotOk");
+    const btn   = document.getElementById("forgotBtn");
 
+    errEl.classList.remove("show"); okEl.classList.remove("show");
+    if (!email) { showMsg(errEl, "Please enter your email address."); return; }
+
+    btn.disabled = true; btn.textContent = "Sending…";
+
+    try {
+        const res  = await fetch(`${BACKEND}/auth/forgot-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+            showMsg(okEl, "Reset link sent! Check your inbox and follow the link to reset your password.");
+        } else {
+            showMsg(errEl, data.error || "Could not send reset email.");
+        }
+    } catch { showMsg(errEl, "Could not reach server. Please try again."); }
+
+    btn.disabled = false; btn.textContent = "Send reset link";
+}
   function logout() {
     authToken = null; userData = null;
     localStorage.removeItem("maya_token");
