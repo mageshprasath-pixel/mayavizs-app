@@ -490,7 +490,11 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
   <p id="upgradeMsg">You've used your free session. Upgrade to MayaVizs Plus for 30 sessions/month.</p>
   <button class="btn-upgrade" onclick="showPaymentModal()">Upgrade — ₹299/month</button>
 </div>
-
+<div class="upgrade-box" id="upgradeBox">
+        <p id="upgradeMsg">You've used all your free sessions. Upgrade to MayaVizs Plus for 30 sessions/month.</p>
+        <button class="btn-upgrade" onclick="showPaymentModal()">Upgrade — ₹299/month</button>
+      </div>
+    </div>
     <!-- Result -->
     <div class="result" id="resultWrap">
       <div class="result-top">
@@ -544,34 +548,23 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
   // ── Init ───────────────────────────────────────────────────────
   
 
-  window.addEventListener("DOMContentLoaded", () => {
-    // Check if this is a password reset redirect from Supabase
-  const hash   = window.location.hash;
-  const params = new URLSearchParams(hash.replace(/^#/, ""));
-  const type   = params.get("type");
-  const token  = params.get("access_token");
-
+ 
+// Check for password reset token IMMEDIATELY
+  (function() {
+    const hash = window.location.hash;
+    if (!hash) return;
+    const params = new URLSearchParams(hash.replace(/^#/, ""));
+    const type   = params.get("type");
+    const token  = params.get("access_token");
     if (type === "recovery" && token) {
-      // Store the recovery token and show reset screen
       window._recoveryToken = token;
-      showScreen("screenReset");
-      return;
+      history.replaceState(null, "", window.location.pathname);
+      document.addEventListener("DOMContentLoaded", () => showScreen("screenReset"));
     }
+  })();
 
-    // Set payment page URL on upgrade button
-    function showErr(msg, isUpgrade = false) {
-  document.getElementById("errBox").classList.remove("show");
-  document.getElementById("upgradeBox").classList.remove("show");
-  if (isUpgrade) {
-    document.getElementById("upgradeMsg").textContent = msg;
-    document.getElementById("upgradeBox").classList.add("show");
-  } else {
-    document.getElementById("errBox").textContent = msg;
-    document.getElementById("errBox").classList.add("show");
-  }
-  document.getElementById("genBtn").disabled = false;
-}
-
+  window.addEventListener("DOMContentLoaded", () => {
+    if (window._recoveryToken) return;
     if (authToken) loadUser();
     else showScreen("screenLogin");
   });
@@ -759,7 +752,6 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     document.getElementById("upgradeBox").classList.remove("show");
     if (isUpgrade) {
       document.getElementById("upgradeMsg").textContent = msg;
-  
       document.getElementById("upgradeBox").classList.add("show");
     } else {
       document.getElementById("errBox").textContent = msg;
