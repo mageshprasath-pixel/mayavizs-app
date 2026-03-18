@@ -486,12 +486,10 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
         </div>
       </div>
       <div class="err-box" id="errBox"></div>
-      <div class="upgrade-box" id="upgradeBox">
-        <p id="upgradeMsg">You've used your free session. Upgrade to MayaVizs Plus for 30 sessions/month.</p>
-        <a class="btn-upgrade" id="upgradeLink" href="#" target="_blank">Upgrade — ₹299/month</a>
-        <p style="font-size:11px;color:#a04030;margin-top:10px;">After payment email us at <strong>hello@mayavizs.com</strong> and we'll activate your account within 24 hours.</p>
-      </div>
-    </div>
+     <div class="upgrade-box" id="upgradeBox">
+  <p id="upgradeMsg">You've used your free session. Upgrade to MayaVizs Plus for 30 sessions/month.</p>
+  <button class="btn-upgrade" onclick="showPaymentModal()">Upgrade — ₹299/month</button>
+</div>
 
     <!-- Result -->
     <div class="result" id="resultWrap">
@@ -544,8 +542,7 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
   let userData  = null;
 
   // ── Init ───────────────────────────────────────────────────────
-  // Razorpay payment page URL - replace with your actual Razorpay payment page link
-  const PAYMENT_PAGE_URL = "https://pages.razorpay.com/YOUR-PAYMENT-PAGE-LINK";
+  
 
   window.addEventListener("DOMContentLoaded", () => {
     // Check if this is a password reset redirect from Supabase
@@ -562,7 +559,18 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     }
 
     // Set payment page URL on upgrade button
-    document.getElementById("upgradeLink").href = PAYMENT_PAGE_URL;
+    function showErr(msg, isUpgrade = false) {
+  document.getElementById("errBox").classList.remove("show");
+  document.getElementById("upgradeBox").classList.remove("show");
+  if (isUpgrade) {
+    document.getElementById("upgradeMsg").textContent = msg;
+    document.getElementById("upgradeBox").classList.add("show");
+  } else {
+    document.getElementById("errBox").textContent = msg;
+    document.getElementById("errBox").classList.add("show");
+  }
+  document.getElementById("genBtn").disabled = false;
+}
 
     if (authToken) loadUser();
     else showScreen("screenLogin");
@@ -751,7 +759,7 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     document.getElementById("upgradeBox").classList.remove("show");
     if (isUpgrade) {
       document.getElementById("upgradeMsg").textContent = msg;
-      document.getElementById("upgradeLink").href = PAYMENT_PAGE_URL;
+  
       document.getElementById("upgradeBox").classList.add("show");
     } else {
       document.getElementById("errBox").textContent = msg;
