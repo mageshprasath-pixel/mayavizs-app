@@ -576,16 +576,26 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
   }
 
   // ── User bar ───────────────────────────────────────────────────
-  function updateUserBar(data) {
+function updateUserBar(data) {
     userData = data;
-    const bar = document.getElementById("userBar");
-    bar.classList.add("show");
+    document.getElementById("userBar").classList.add("show");
     document.getElementById("userEmail").textContent = data.email;
-    document.getElementById("userUsage").textContent =
-      `${data.sessions_used} / ${data.sessions_limit} sessions used this month`;
+    document.getElementById("userUsage").textContent = `${data.sessions_used} / ${data.sessions_limit} sessions used this month`;
     const planEl = document.getElementById("userPlan");
     planEl.textContent = data.plan === "paid" ? "Plus ✓" : "Free";
     planEl.className   = "user-plan" + (data.plan === "paid" ? " paid" : "");
+
+    // Show upgrade box immediately if sessions are used up
+    if (data.sessions_used >= data.sessions_limit && data.plan === "free") {
+      document.getElementById("progressWrap").classList.add("show");
+      document.getElementById("upgradeMsg").textContent = "You've used all your free sessions. Upgrade to MayaVizs Plus for 30 sessions/month.";
+      document.getElementById("upgradeBox").classList.add("show");
+      document.getElementById("genBtn").disabled = true;
+    } else {
+      document.getElementById("progressWrap").classList.remove("show");
+      document.getElementById("upgradeBox").classList.remove("show");
+      document.getElementById("genBtn").disabled = false;
+    }
   }
 
   async function loadUser() {
