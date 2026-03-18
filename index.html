@@ -323,8 +323,7 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
 
   <div class="brand">
     <div class="brand-dot"></div>
-    <div class="brand-name">MayaVizs - </div>
-    <Body>Your personal guided audio session</body>
+    <div class="brand-name">MayaVizs</div>
   </div>
 
   <!-- User bar (shown when logged in) -->
@@ -339,7 +338,7 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     </div>
   </div>
 
- <!-- Login screen -->
+  <!-- Login screen -->
   <div class="screen active" id="screenLogin">
     <div class="screen-title">Welcome back</div>
     <div class="screen-sub">Log in to generate your personalized guided session.</div>
@@ -352,8 +351,8 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
       <label class="field-label">Password</label>
       <input type="password" id="loginPassword" placeholder="Your password"/>
     </div>
-    <div style="text-align:right; margin-bottom:14px;">
-      <a onclick="showScreen('screenForgot')" style="font-size:12.5px; color:var(--coral); cursor:pointer; text-decoration:none;">Forgot password?</a>
+    <div style="text-align:right; margin-bottom:14px; margin-top:-6px;">
+      <a onclick="showScreen('screenForgot')" style="font-size:12.5px; color:var(--coral); cursor:pointer;">Forgot password?</a>
     </div>
     <button class="btn btn-coral" id="loginBtn" onclick="doLogin()">Log in</button>
     <div class="auth-switch">Don't have an account? <a onclick="showScreen('screenSignup')">Sign up free</a></div>
@@ -362,7 +361,7 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
   <!-- Forgot password screen -->
   <div class="screen" id="screenForgot">
     <div class="screen-title">Reset your password</div>
-    <div class="screen-sub">Enter your email and we'll send you a link to reset your password.</div>
+    <div class="screen-sub">Enter your email and we'll send you a reset link.</div>
     <div class="msg error" id="forgotErr"></div>
     <div class="msg success" id="forgotOk"></div>
     <div class="field">
@@ -373,10 +372,27 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     <div class="auth-switch"><a onclick="showScreen('screenLogin')">← Back to login</a></div>
   </div>
 
+  <!-- Reset password screen (shown after clicking email link) -->
+  <div class="screen" id="screenReset">
+    <div class="screen-title">Set new password</div>
+    <div class="screen-sub">Enter your new password below.</div>
+    <div class="msg error" id="resetErr"></div>
+    <div class="msg success" id="resetOk"></div>
+    <div class="field">
+      <label class="field-label">New password</label>
+      <input type="password" id="resetPassword" placeholder="At least 6 characters"/>
+    </div>
+    <div class="field">
+      <label class="field-label">Confirm new password</label>
+      <input type="password" id="resetPassword2" placeholder="Repeat your new password"/>
+    </div>
+    <button class="btn btn-coral" id="resetBtn" onclick="doResetPassword()" style="margin-top:6px;">Update password</button>
+  </div>
+
   <!-- Signup screen -->
   <div class="screen" id="screenSignup">
     <div class="screen-title">Create your account</div>
-    <div class="screen-sub">Get 05 free sessions to start — no credit card needed.</div>
+    <div class="screen-sub">Get 5 free sessions to start — no credit card needed.</div>
     <div class="msg error" id="signupErr"></div>
     <div class="msg success" id="signupOk"></div>
     <div class="field">
@@ -471,8 +487,9 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
       </div>
       <div class="err-box" id="errBox"></div>
       <div class="upgrade-box" id="upgradeBox">
-        <p id="upgradeMsg">You've used all 5 free sessions. Upgrade to MayaVizs Plus for 30 sessions/month.</p>
-        <button class="btn-upgrade" onclick="showPaymentModal()">Upgrade — ₹299/month</button>
+        <p id="upgradeMsg">You've used your free session. Upgrade to MayaVizs Plus for 30 sessions/month.</p>
+        <a class="btn-upgrade" id="upgradeLink" href="#" target="_blank">Upgrade — ₹299/month</a>
+        <p style="font-size:11px;color:#a04030;margin-top:10px;">After payment email us at <strong>hello@mayavizs.com</strong> and we'll activate your account within 24 hours.</p>
       </div>
     </div>
 
@@ -527,7 +544,26 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
   let userData  = null;
 
   // ── Init ───────────────────────────────────────────────────────
+  // Razorpay payment page URL - replace with your actual Razorpay payment page link
+  const PAYMENT_PAGE_URL = "https://pages.razorpay.com/YOUR-PAYMENT-PAGE-LINK";
+
   window.addEventListener("DOMContentLoaded", () => {
+    // Check if this is a password reset redirect from Supabase
+    const hash   = window.location.hash;
+    const params = new URLSearchParams(hash.replace("#", "?"));
+    const type   = params.get("type");
+    const token  = params.get("access_token");
+
+    if (type === "recovery" && token) {
+      // Store the recovery token and show reset screen
+      window._recoveryToken = token;
+      showScreen("screenReset");
+      return;
+    }
+
+    // Set payment page URL on upgrade button
+    document.getElementById("upgradeLink").href = PAYMENT_PAGE_URL;
+
     if (authToken) loadUser();
     else showScreen("screenLogin");
   });
@@ -625,7 +661,8 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
 
     btn.disabled = false; btn.textContent = "Create account";
   }
-async function doForgotPassword() {
+
+  async function doForgotPassword() {
     const email = document.getElementById("forgotEmail").value.trim();
     const errEl = document.getElementById("forgotErr");
     const okEl  = document.getElementById("forgotOk");
@@ -637,21 +674,55 @@ async function doForgotPassword() {
     btn.disabled = true; btn.textContent = "Sending…";
 
     try {
-        const res  = await fetch(`${BACKEND}/auth/forgot-password`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-        });
-        const data = await res.json();
-        if (res.ok) {
-            showMsg(okEl, "Reset link sent! Check your inbox and follow the link to reset your password.");
-        } else {
-            showMsg(errEl, data.error || "Could not send reset email.");
-        }
+      const res  = await fetch(`${BACKEND}/auth/forgot-password`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showMsg(okEl, "Reset link sent! Check your inbox and follow the link.");
+      } else {
+        showMsg(errEl, data.error || "Could not send reset email.");
+      }
     } catch { showMsg(errEl, "Could not reach server. Please try again."); }
 
     btn.disabled = false; btn.textContent = "Send reset link";
-}
+  }
+
+  async function doResetPassword() {
+    const password  = document.getElementById("resetPassword").value.trim();
+    const password2 = document.getElementById("resetPassword2").value.trim();
+    const errEl     = document.getElementById("resetErr");
+    const okEl      = document.getElementById("resetOk");
+    const btn       = document.getElementById("resetBtn");
+
+    errEl.classList.remove("show"); okEl.classList.remove("show");
+
+    if (!password)              { showMsg(errEl, "Please enter a new password."); return; }
+    if (password.length < 6)    { showMsg(errEl, "Password must be at least 6 characters."); return; }
+    if (password !== password2) { showMsg(errEl, "Passwords do not match."); return; }
+    if (!window._recoveryToken) { showMsg(errEl, "Invalid reset link. Please request a new one."); return; }
+
+    btn.disabled = true; btn.textContent = "Updating…";
+
+    try {
+      const res  = await fetch(`${BACKEND}/auth/reset-password`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: window._recoveryToken, password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showMsg(okEl, "Password updated! Redirecting to login…");
+        window._recoveryToken = null;
+        setTimeout(() => { window.location.hash = ""; showScreen("screenLogin"); }, 2000);
+      } else {
+        showMsg(errEl, data.error || "Could not update password.");
+      }
+    } catch { showMsg(errEl, "Could not reach server. Please try again."); }
+
+    btn.disabled = false; btn.textContent = "Update password";
+  }
+
   function logout() {
     authToken = null; userData = null;
     localStorage.removeItem("maya_token");
@@ -680,6 +751,7 @@ async function doForgotPassword() {
     document.getElementById("upgradeBox").classList.remove("show");
     if (isUpgrade) {
       document.getElementById("upgradeMsg").textContent = msg;
+      document.getElementById("upgradeLink").href = PAYMENT_PAGE_URL;
       document.getElementById("upgradeBox").classList.add("show");
     } else {
       document.getElementById("errBox").textContent = msg;
