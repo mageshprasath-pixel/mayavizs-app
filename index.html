@@ -482,7 +482,7 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
           <div class="s-icon" id="si2">2</div>
           <div class="s-text">
             <div class="s-name">Synthesizing voice</div>
-            <div class="s-note" id="sn2">OpenAI TTS is generating your audio…</div>
+            <div class="s-note" id="sn2">Maya is generating your audio…</div>
           </div>
         </div>
       </div>
@@ -806,7 +806,7 @@ function updateUserBar(data) {
     const timers = [
       setTimeout(() => stepFn(1, 'active', 'Writing your grounding sequence…'), 3000),
       setTimeout(() => stepFn(1, 'active', 'Crafting the core visualization…'), 7000),
-      setTimeout(() => { stepFn(1,'done','Done'); stepFn(2,'active','OpenAI TTS rendering your voice…'); }, 11000),
+      setTimeout(() => { stepFn(1,'done','Done'); stepFn(2,'active','Maya is rendering your voice…'); }, 11000),
       setTimeout(() => stepFn(2, 'active', 'Voice almost ready…'), 20000),
     ];
 
