@@ -796,7 +796,7 @@ function updateUserBar(data) {
     document.getElementById("upgradeBox").classList.remove("show");
     [1,2].forEach(n => stepFn(n, '', ''));
 
-    stepFn(1, 'active', 'GPT-4o-mini is writing your session…');
+    stepFn(1, 'active', 'Maya is writing your session…');
     await sleep(300);
     stepFn(2, 'active', 'Queued…');
 
