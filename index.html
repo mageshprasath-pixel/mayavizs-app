@@ -585,6 +585,7 @@ function updateUserBar(data) {
     const planEl = document.getElementById("userPlan");
     planEl.textContent = data.plan === "paid" ? "Plus ✓" : "Free";
     planEl.className   = "user-plan" + (data.plan === "paid" ? " paid" : "");
+    document.getElementById("upgradeNavBtn").style.display = data.plan === "paid" ? "none" : "inline-block";
 
     // Show upgrade box immediately if sessions are used up
     if (data.sessions_used >= data.sessions_limit && data.plan === "free") {
