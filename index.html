@@ -595,6 +595,37 @@ function updateUserBar(data) {
     document.getElementById("dlBtn").style.display = data.plan === "paid" ? "flex" : "none";
     document.getElementById("downloadNote").style.display = data.plan === "paid" ? "none" : "block";
   
+  // Restrict options for free users
+const isPaid = data.plan === "paid";
+const focusSelect = document.getElementById("focusArea");
+Array.from(focusSelect.options).forEach(opt => {
+  const freeOptions = ["anxiety", "sleep"];
+  if (!freeOptions.includes(opt.value) && opt.value !== "") {
+    opt.disabled = !isPaid;
+    opt.text = (!isPaid && opt.value !== "" && !freeOptions.includes(opt.value))
+      ? opt.text.replace(" 🔒", "") + " 🔒"
+      : opt.text.replace(" 🔒", "");
+  }
+});
+
+// Restrict voice for free users
+const voiceSelect = document.getElementById("voiceSelect");
+Array.from(voiceSelect.options).forEach(opt => {
+  if (opt.value !== "nova") {
+    opt.disabled = !isPaid;
+    opt.text = !isPaid
+      ? opt.text.replace(" 🔒", "") + " 🔒"
+      : opt.text.replace(" 🔒", "");
+  }
+});
+
+// Reset to allowed option if current selection is restricted
+if (!isPaid) {
+  if (!["anxiety", "sleep"].includes(focusSelect.value)) {
+    focusSelect.value = "anxiety";
+  }
+  voiceSelect.value = "nova";
+}
     // Show upgrade box immediately if sessions are used up
     if (data.sessions_used >= data.sessions_limit && data.plan === "free") {
       document.getElementById("progressWrap").classList.add("show");
