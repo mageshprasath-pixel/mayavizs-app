@@ -506,6 +506,9 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
         </div>
       </div>
       <audio controls id="player"></audio>
+      <p id="downloadNote" style="display:none;font-size:12px;color:var(--text-3);text-align:center;margin-bottom:10px;">
+      🔒 Download available on <a onclick="showPaymentModal()" style="color:var(--coral);cursor:pointer;font-weight:500;">MayaVizs Plus</a>
+      </p>
       <div class="result-actions">
         <a class="btn-dl" id="dlBtn" download="mayavizs-session.mp3">↓ Download audio</a>
         <button class="btn-new" onclick="resetGen()">← Start over</button>
@@ -586,7 +589,9 @@ function updateUserBar(data) {
     planEl.textContent = data.plan === "paid" ? "Plus ✓" : "Free";
     planEl.className   = "user-plan" + (data.plan === "paid" ? " paid" : "");
     document.getElementById("upgradeNavBtn").style.display = data.plan === "paid" ? "none" : "inline-block";
-
+    document.getElementById("dlBtn").style.display = data.plan === "paid" ? "flex" : "none";
+    document.getElementById("downloadNote").style.display = data.plan === "paid" ? "none" : "block";
+  
     // Show upgrade box immediately if sessions are used up
     if (data.sessions_used >= data.sessions_limit && data.plan === "free") {
       document.getElementById("progressWrap").classList.add("show");
@@ -835,6 +840,7 @@ function updateUserBar(data) {
       const url  = URL.createObjectURL(blob);
       document.getElementById("player").src = url;
       document.getElementById("dlBtn").href = url;
+      document.getElementById("dlBtn").style.display = userData && userData.plan === "paid" ? "flex" : "none";
       document.getElementById("resultSub").textContent =
         `${duration}-minute personalized session · ready to play or download`;
 
