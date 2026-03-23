@@ -84,11 +84,11 @@ input[type="email"], input[type="password"], input[type="text"] {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-input:focus {
+/*input:focus {
   border-color: var(--coral-lt);
   box-shadow: 0 0 0 3px rgba(232,105,74,0.12);
   background: var(--white);
-}
+}*/
 
 input::placeholder { color: var(--text-3); }
 
@@ -184,12 +184,12 @@ textarea, select {
 
 textarea { min-height: 110px; resize: vertical; line-height: 1.65; margin-bottom: 10px; }
 textarea::placeholder { color: var(--text-3); font-weight: 300; }
-textarea:focus, select:focus {
+/*textarea:focus, select:focus {
   border-color: var(--coral-lt);
   box-shadow: 0 0 0 3px rgba(232,105,74,0.12);
   background: var(--white);
 }
-
+*/
 select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 13px center; padding-right: 34px; cursor: pointer;
@@ -415,7 +415,7 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     <div class="block">
       <div class="label">Your intention</div>
       <textarea id="goalInput" placeholder="Describe what you are going through or what you would like to work on. The more specific you are, the more personal your session will feel."></textarea>
-      <select id="focusArea">
+ <!--    <select id="focusArea">
   <optgroup label="Calm & Wellbeing">
     <option value="anxiety">Anxiety & stress relief</option>
     <option value="sleep">Sleep & rest</option>
@@ -436,7 +436,7 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     <option value="relationships">Relationships & connection</option>
     <option value="boundaries">Boundaries & self-respect</option>
   </optgroup>
-</select>
+</select> -->
     </div>
 
     <div class="block">
@@ -591,7 +591,7 @@ function updateUserBar(data) {
   
   // Restrict options for free users
 const isPaid = data.plan === "paid";
-const focusSelect = document.getElementById("focusArea");
+/* <const focusSelect = document.getElementById("focusArea"); 
 Array.from(focusSelect.options).forEach(opt => {
   const freeOptions = ["anxiety", "sleep"];
   if (!freeOptions.includes(opt.value) && opt.value !== "") {
@@ -601,6 +601,7 @@ Array.from(focusSelect.options).forEach(opt => {
       : opt.text.replace(" 🔒", "");
   }
 });
+*/
 
 // Restrict voice for free users
 const voiceSelect = document.getElementById("voiceSelect");
@@ -614,12 +615,12 @@ Array.from(voiceSelect.options).forEach(opt => {
 });
 
 // Reset to allowed option if current selection is restricted
-if (!isPaid) {
+/*if (!isPaid) {
   if (!["anxiety", "sleep"].includes(focusSelect.value)) {
     focusSelect.value = "anxiety";
   }
   voiceSelect.value = "nova";
-}
+}*/
     // Show upgrade box immediately if sessions are used up
     if (data.sessions_used >= data.sessions_limit && data.plan === "free") {
       document.getElementById("progressWrap").classList.add("show");
@@ -809,7 +810,7 @@ if (!isPaid) {
 
   async function generate() {
     const goal     = document.getElementById("goalInput").value.trim();
-    const focus    = document.getElementById("focusArea").value;
+   /* const focus    = document.getElementById("focusArea").value;*/
     const voice    = document.getElementById("voiceSelect").value;
     const duration = parseInt(document.getElementById("durationSelect").value);
 
@@ -839,7 +840,7 @@ if (!isPaid) {
       const res = await fetch(`${BACKEND}/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
-        body: JSON.stringify({ goal, focus, voice, duration }),
+        body: JSON.stringify({ goal, voice, duration }),
       });
 
       timers.forEach(clearTimeout);
