@@ -8,314 +8,119 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-
 :root {
-  --white:       #ffffff;
-  --bg:          #fafaf9;
-  --coral:       #e8694a;
-  --coral-d:     #d05535;
-  --coral-lt:    #f4937a;
-  --coral-pale:  #fdf0ec;
-  --peach:       #f5c4a8;
-  --peach-pale:  #fef7f3;
-  --text:        #1a1a1a;
-  --text-2:      #555555;
-  --text-3:      #999999;
-  --line:        #ebebeb;
-  --input-bg:    #f7f7f6;
-  --green:       #3a9e6a;
-  --green-pale:  #edf8f2;
-  --radius:      12px;
+  --white:#ffffff; --bg:#fafaf9; --coral:#e8694a; --coral-d:#d05535;
+  --coral-lt:#f4937a; --coral-pale:#fdf0ec; --peach:#f5c4a8; --peach-pale:#fef7f3;
+  --text:#1a1a1a; --text-2:#555555; --text-3:#999999; --line:#ebebeb;
+  --input-bg:#f7f7f6; --green:#3a9e6a; --green-pale:#edf8f2; --radius:12px;
 }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; font-size:14px; line-height:1.6; -webkit-font-smoothing:antialiased; min-height:100vh; }
+.wrap { max-width:560px; margin:0 auto; padding:48px 24px 80px; }
+.brand { display:flex; align-items:center; gap:8px; margin-bottom:32px; }
+.brand-dot { width:8px; height:8px; border-radius:50%; background:var(--coral); }
+.brand-name { font-size:17px; font-weight:700; color:var(--text); letter-spacing:-0.03em; }
+.screen { display:none; }
+.screen.active { display:block; animation:up 0.4s ease both; }
+.screen-title { font-size:22px; font-weight:600; letter-spacing:-0.03em; color:var(--text); margin-bottom:6px; }
+.screen-sub { font-size:13.5px; color:var(--text-2); font-weight:300; margin-bottom:28px; line-height:1.6; }
+.field { margin-bottom:14px; }
+.field-label { display:block; font-size:12px; font-weight:500; color:var(--text-2); margin-bottom:7px; }
+input[type="email"], input[type="password"] {
+  width:100%; background:var(--input-bg); border:1.5px solid var(--line);
+  border-radius:var(--radius); padding:12px 14px; font-family:'Inter',sans-serif;
+  font-size:13.5px; font-weight:300; color:var(--text); outline:none;
+  transition:border-color 0.15s, box-shadow 0.15s;
 }
-
-.wrap {
-  max-width: 560px;
-  margin: 0 auto;
-  padding: 48px 24px 80px;
-}
-
-/* ── Brand ── */
-.brand {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 32px;
-}
-.brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--coral); }
-.brand-name { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.03em; }
-
-/* ── Auth screens ── */
-.screen { display: none; }
-.screen.active { display: block; animation: up 0.4s ease both; }
-
-.screen-title {
-  font-size: 22px; font-weight: 600;
-  letter-spacing: -0.03em; color: var(--text);
-  margin-bottom: 6px;
-}
-.screen-sub {
-  font-size: 13.5px; color: var(--text-2);
-  font-weight: 300; margin-bottom: 28px; line-height: 1.6;
-}
-
-.field { margin-bottom: 14px; }
-.field-label {
-  display: block; font-size: 12px; font-weight: 500;
-  color: var(--text-2); margin-bottom: 7px;
-}
-
-input[type="email"], input[type="password"], input[type="text"] {
-  width: 100%;
-  background: var(--input-bg);
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-  font-family: 'Inter', sans-serif;
-  font-size: 13.5px; font-weight: 300;
-  color: var(--text); outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-/*input:focus {
-  border-color: var(--coral-lt);
-  box-shadow: 0 0 0 3px rgba(232,105,74,0.12);
-  background: var(--white);
-}*/
-
-input::placeholder { color: var(--text-3); }
-
-.btn {
-  width: 100%; padding: 13px;
-  border-radius: var(--radius);
-  font-family: 'Inter', sans-serif;
-  font-size: 14px; font-weight: 500;
-  cursor: pointer; transition: all 0.15s;
-  border: none;
-}
-
-.btn-coral {
-  background: var(--coral); color: #fff;
-  box-shadow: 0 4px 14px rgba(232,105,74,0.22);
-}
-.btn-coral:hover:not(:disabled) { background: var(--coral-d); transform: translateY(-1px); }
-.btn-coral:disabled { background: var(--peach); cursor: not-allowed; transform: none; }
-
-.btn-outline {
-  background: none; color: var(--text-2);
-  border: 1.5px solid var(--line) !important;
-  margin-top: 10px;
-}
-.btn-outline:hover { border-color: var(--text-3) !important; color: var(--text); }
-
-.auth-switch {
-  text-align: center; margin-top: 20px;
-  font-size: 13px; color: var(--text-3);
-}
-.auth-switch a {
-  color: var(--coral); text-decoration: none; font-weight: 500; cursor: pointer;
-}
-.auth-switch a:hover { text-decoration: underline; }
-
-.msg {
-  padding: 11px 14px; border-radius: 9px;
-  font-size: 13px; line-height: 1.55;
-  margin-bottom: 16px; display: none;
-}
-.msg.show { display: block; }
-.msg.error { background: #fef4f4; border: 1px solid #f0c0c0; color: #c05050; }
-.msg.success { background: var(--green-pale); border: 1px solid #b0dfc0; color: var(--green); }
-.msg.info { background: var(--coral-pale); border: 1px solid #f4c0a8; color: #b05030; }
-
-hr { border: none; border-top: 1px solid var(--line); margin: 24px 0; }
-
-/* ── User bar ── */
-.user-bar {
-  display: none;
-  align-items: center; justify-content: space-between;
-  padding: 10px 14px;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  margin-bottom: 24px;
-  gap: 12px;
-}
-.user-bar.show { display: flex; }
-.user-email { font-size: 12.5px; color: var(--text-2); font-weight: 400; }
-.user-plan {
-  font-size: 11px; font-weight: 600;
-  padding: 3px 9px; border-radius: 20px;
-  background: var(--coral-pale); color: var(--coral);
-}
-.user-plan.paid { background: var(--green-pale); color: var(--green); }
-.user-usage { font-size: 11.5px; color: var(--text-3); }
-.btn-logout {
-  background: none; border: none;
-  font-size: 12px; color: var(--text-3);
-  cursor: pointer; padding: 4px 8px;
-  border-radius: 6px; transition: all 0.15s;
-}
-.btn-logout:hover { background: var(--line); color: var(--text-2); }
-
-/* ── Generator ── */
-.label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 14px; }
-
-textarea, select {
-  width: 100%;
-  background: var(--input-bg);
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius);
-  padding: 13px 15px;
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  font-size: 13.5px; font-weight: 300;
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  -webkit-appearance: none; appearance: none;
-  display: block;
-}
-
-textarea { min-height: 110px; resize: vertical; line-height: 1.65; margin-bottom: 10px; }
-textarea::placeholder { color: var(--text-3); font-weight: 300; }
-/*textarea:focus, select:focus {
-  border-color: var(--coral-lt);
-  box-shadow: 0 0 0 3px rgba(232,105,74,0.12);
-  background: var(--white);
-}
-*/
-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 13px center; padding-right: 34px; cursor: pointer;
-}
-select option { background: #fff; }
-
-.block { margin-bottom: 28px; }
-.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-@media (max-width: 460px) { .row-2 { grid-template-columns: 1fr; } }
-
-.note { font-size: 11.5px; color: var(--text-3); margin-top: 9px; font-weight: 300; }
-
-/* ── Progress ── */
-.progress { display: none; margin-top: 28px; }
-.progress.show { display: block; animation: up 0.4s ease both; }
-.prog-title { font-size: 13px; font-weight: 500; color: var(--text-2); margin-bottom: 14px; }
-.steps { display: flex; flex-direction: column; gap: 2px; }
-.step {
-  display: flex; align-items: center; gap: 13px;
-  padding: 11px 14px; border-radius: 9px; transition: background 0.2s;
-}
-.step.active { background: var(--peach-pale); }
-.step.done   { background: var(--green-pale); }
-.step.err    { background: #fef4f4; }
-.s-icon {
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 1.5px solid var(--line); background: var(--white);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; flex-shrink: 0; transition: all 0.2s;
-}
-.step.active .s-icon { border-color: var(--coral-lt); background: var(--coral-pale); animation: pulse 1.6s ease-in-out infinite; }
-.step.done   .s-icon { border-color: #74c49a; background: var(--green-pale); color: var(--green); font-weight: 600; }
-.step.err    .s-icon { border-color: #e89494; background: #fdeaea; color: #c05050; font-weight: 600; }
-.s-name { font-size: 13px; font-weight: 400; color: var(--text); }
-.s-note { font-size: 11px; color: var(--text-3); margin-top: 2px; }
-.step.active .s-name { color: var(--coral); }
-.step.done   .s-name { color: var(--green); }
-.step.err    .s-name { color: #c05050; }
-
-.err-box {
-  display: none; margin-top: 14px; padding: 12px 14px;
-  background: #fef4f4; border: 1px solid #f0c0c0;
-  border-radius: 9px; font-size: 13px; color: #c05050; line-height: 1.55;
-}
-.err-box.show { display: block; }
-
-/* ── Upgrade prompt ── */
-.upgrade-box {
-  display: none; margin-top: 14px; padding: 18px;
-  background: var(--coral-pale); border: 1.5px solid var(--coral-lt);
-  border-radius: var(--radius); text-align: center;
-}
-.upgrade-box.show { display: block; }
-.upgrade-box p { font-size: 13.5px; color: #a04030; margin-bottom: 14px; line-height: 1.6; }
-.btn-upgrade {
-  display: inline-block; padding: 11px 24px;
-  background: var(--coral); color: #fff;
-  border: none; border-radius: 9px;
-  font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 500;
-  cursor: pointer; transition: background 0.15s;
-}
-.btn-upgrade:hover { background: var(--coral-d); }
-
-/* ── Result ── */
-.result { display: none; margin-top: 28px; animation: up 0.4s ease both; }
-.result.show { display: block; }
-.result-top {
-  display: flex; align-items: flex-start; gap: 14px;
-  padding-bottom: 18px; border-bottom: 1px solid var(--line); margin-bottom: 18px;
-}
-.result-icon {
-  width: 40px; height: 40px; background: var(--coral-pale);
-  border-radius: 10px; display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
-}
-.result-text h3 { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; margin-bottom: 3px; }
-.result-text p  { font-size: 12px; color: var(--text-3); font-weight: 300; }
-audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
-.result-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-.btn-dl {
-  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
-  padding: 11px 18px; background: var(--coral); color: #fff;
-  border: none; border-radius: 9px;
-  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
-  text-decoration: none; cursor: pointer; transition: background 0.15s; min-width: 140px;
-}
-.btn-dl:hover { background: var(--coral-d); }
-.btn-new {
-  flex: 1; padding: 11px 18px;
-  background: var(--input-bg); color: var(--text-2);
-  border: 1.5px solid var(--line); border-radius: 9px;
-  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 400;
-  cursor: pointer; transition: border-color 0.15s; min-width: 140px;
-}
-.btn-new:hover { border-color: var(--text-3); }
-
-/* ── Payment modal ── */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.4); z-index: 100;
-  align-items: center; justify-content: center; padding: 24px;
-}
-.modal-overlay.show { display: flex; }
-.modal {
-  background: var(--white); border-radius: 20px;
-  padding: 32px; max-width: 420px; width: 100%;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  animation: up 0.3s ease both;
-}
-.modal h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
-.modal p  { font-size: 13.5px; color: var(--text-2); font-weight: 300; line-height: 1.6; margin-bottom: 20px; }
-.plan-box {
-  background: var(--coral-pale); border: 1.5px solid var(--coral-lt);
-  border-radius: var(--radius); padding: 18px; margin-bottom: 20px; text-align: center;
-}
-.plan-price { font-size: 2rem; font-weight: 700; letter-spacing: -0.04em; color: var(--text); }
-.plan-price span { font-size: 1rem; font-weight: 400; color: var(--text-2); }
-.plan-features { list-style: none; margin: 12px 0 0; display: flex; flex-direction: column; gap: 6px; text-align: left; }
-.plan-features li { font-size: 13px; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
-.plan-features li::before { content: '✓'; color: var(--coral); font-weight: 600; flex-shrink: 0; }
-.modal-actions { display: flex; flex-direction: column; gap: 8px; }
-.btn-cancel { background: none; border: none; font-size: 13px; color: var(--text-3); cursor: pointer; text-align: center; padding: 8px; }
-.btn-cancel:hover { color: var(--text-2); }
-
-@keyframes up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(232,105,74,0.4); } 50% { box-shadow: 0 0 0 6px rgba(232,105,74,0); } }
+input:focus { border-color:var(--coral-lt); box-shadow:0 0 0 3px rgba(232,105,74,0.12); background:var(--white); }
+input::placeholder { color:var(--text-3); }
+.btn { width:100%; padding:13px; border-radius:var(--radius); font-family:'Inter',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:all 0.15s; border:none; }
+.btn-coral { background:var(--coral); color:#fff; box-shadow:0 4px 14px rgba(232,105,74,0.22); }
+.btn-coral:hover:not(:disabled) { background:var(--coral-d); transform:translateY(-1px); }
+.btn-coral:disabled { background:var(--peach); cursor:not-allowed; transform:none; }
+.auth-switch { text-align:center; margin-top:20px; font-size:13px; color:var(--text-3); }
+.auth-switch a { color:var(--coral); text-decoration:none; font-weight:500; cursor:pointer; }
+.auth-switch a:hover { text-decoration:underline; }
+.msg { padding:11px 14px; border-radius:9px; font-size:13px; line-height:1.55; margin-bottom:16px; display:none; }
+.msg.show { display:block; }
+.msg.error { background:#fef4f4; border:1px solid #f0c0c0; color:#c05050; }
+.msg.success { background:var(--green-pale); border:1px solid #b0dfc0; color:var(--green); }
+.user-bar { display:none; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--white); border:1px solid var(--line); border-radius:var(--radius); margin-bottom:24px; gap:12px; }
+.user-bar.show { display:flex; }
+.user-email { font-size:12.5px; color:var(--text-2); font-weight:400; }
+.user-plan { font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; background:var(--coral-pale); color:var(--coral); }
+.user-plan.paid { background:var(--green-pale); color:var(--green); }
+.user-usage { font-size:11.5px; color:var(--text-3); }
+.btn-logout { background:none; border:none; font-size:12px; color:var(--text-3); cursor:pointer; padding:4px 8px; border-radius:6px; transition:all 0.15s; }
+.btn-logout:hover { background:var(--line); color:var(--text-2); }
+.btn-upgrade-nav { background:var(--coral); color:#fff; border:none; font-family:'Inter',sans-serif; font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; cursor:pointer; }
+.label { font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3); margin-bottom:14px; }
+textarea, select { width:100%; background:var(--input-bg); border:1.5px solid var(--line); border-radius:var(--radius); padding:13px 15px; color:var(--text); font-family:'Inter',sans-serif; font-size:13.5px; font-weight:300; outline:none; transition:border-color 0.15s, box-shadow 0.15s; -webkit-appearance:none; appearance:none; display:block; }
+textarea { min-height:110px; resize:vertical; line-height:1.65; margin-bottom:10px; }
+textarea::placeholder { color:var(--text-3); font-weight:300; }
+textarea:focus, select:focus { border-color:var(--coral-lt); box-shadow:0 0 0 3px rgba(232,105,74,0.12); background:var(--white); }
+select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 13px center; padding-right:34px; cursor:pointer; }
+select option { background:#fff; }
+select option:disabled { color:var(--text-3); }
+.block { margin-bottom:28px; }
+.row-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+@media (max-width:460px) { .row-2 { grid-template-columns:1fr; } .row-3 { grid-template-columns:1fr; } }
+.progress { display:none; margin-top:28px; }
+.progress.show { display:block; animation:up 0.4s ease both; }
+.prog-title { font-size:13px; font-weight:500; color:var(--text-2); margin-bottom:14px; }
+.steps { display:flex; flex-direction:column; gap:2px; }
+.step { display:flex; align-items:center; gap:13px; padding:11px 14px; border-radius:9px; transition:background 0.2s; }
+.step.active { background:var(--peach-pale); }
+.step.done   { background:var(--green-pale); }
+.step.err    { background:#fef4f4; }
+.s-icon { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--line); background:var(--white); display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; transition:all 0.2s; }
+.step.active .s-icon { border-color:var(--coral-lt); background:var(--coral-pale); animation:pulse 1.6s ease-in-out infinite; }
+.step.done   .s-icon { border-color:#74c49a; background:var(--green-pale); color:var(--green); font-weight:600; }
+.step.err    .s-icon { border-color:#e89494; background:#fdeaea; color:#c05050; font-weight:600; }
+.s-name { font-size:13px; font-weight:400; color:var(--text); }
+.s-note { font-size:11px; color:var(--text-3); margin-top:2px; }
+.step.active .s-name { color:var(--coral); }
+.step.done   .s-name { color:var(--green); }
+.step.err    .s-name { color:#c05050; }
+.err-box { display:none; margin-top:14px; padding:12px 14px; background:#fef4f4; border:1px solid #f0c0c0; border-radius:9px; font-size:13px; color:#c05050; line-height:1.55; }
+.err-box.show { display:block; }
+.upgrade-box { display:none; margin-top:14px; padding:18px; background:var(--coral-pale); border:1.5px solid var(--coral-lt); border-radius:var(--radius); text-align:center; }
+.upgrade-box.show { display:block; }
+.upgrade-box p { font-size:13.5px; color:#a04030; margin-bottom:14px; line-height:1.6; }
+.btn-upgrade { display:inline-block; padding:11px 24px; background:var(--coral); color:#fff; border:none; border-radius:9px; font-family:'Inter',sans-serif; font-size:13.5px; font-weight:500; cursor:pointer; transition:background 0.15s; }
+.btn-upgrade:hover { background:var(--coral-d); }
+.result { display:none; margin-top:28px; animation:up 0.4s ease both; }
+.result.show { display:block; }
+.result-top { display:flex; align-items:flex-start; gap:14px; padding-bottom:18px; border-bottom:1px solid var(--line); margin-bottom:18px; }
+.result-icon { width:40px; height:40px; background:var(--coral-pale); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.result-text h3 { font-size:15px; font-weight:600; color:var(--text); letter-spacing:-0.02em; margin-bottom:3px; }
+.result-text p { font-size:12px; color:var(--text-3); font-weight:300; }
+audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
+.download-note { display:none; font-size:12px; color:var(--text-3); text-align:center; margin-bottom:10px; }
+.result-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.btn-dl { flex:1; display:flex; align-items:center; justify-content:center; gap:7px; padding:11px 18px; background:var(--coral); color:#fff; border:none; border-radius:9px; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; text-decoration:none; cursor:pointer; transition:background 0.15s; min-width:140px; }
+.btn-dl:hover { background:var(--coral-d); }
+.btn-new { flex:1; padding:11px 18px; background:var(--input-bg); color:var(--text-2); border:1.5px solid var(--line); border-radius:9px; font-family:'Inter',sans-serif; font-size:13px; font-weight:400; cursor:pointer; transition:border-color 0.15s; min-width:140px; }
+.btn-new:hover { border-color:var(--text-3); }
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center; padding:24px; }
+.modal-overlay.show { display:flex; }
+.modal { background:var(--white); border-radius:20px; padding:32px; max-width:420px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.15); animation:up 0.3s ease both; }
+.modal h3 { font-size:18px; font-weight:600; letter-spacing:-0.02em; margin-bottom:6px; }
+.modal p { font-size:13.5px; color:var(--text-2); font-weight:300; line-height:1.6; margin-bottom:20px; }
+.plan-box { background:var(--coral-pale); border:1.5px solid var(--coral-lt); border-radius:var(--radius); padding:18px; margin-bottom:20px; text-align:center; }
+.plan-price { font-size:2rem; font-weight:700; letter-spacing:-0.04em; color:var(--text); }
+.plan-price span { font-size:1rem; font-weight:400; color:var(--text-2); }
+.plan-features { list-style:none; margin:12px 0 0; display:flex; flex-direction:column; gap:6px; text-align:left; }
+.plan-features li { font-size:13px; color:var(--text-2); display:flex; align-items:center; gap:8px; }
+.plan-features li::before { content:'✓'; color:var(--coral); font-weight:600; flex-shrink:0; }
+.modal-actions { display:flex; flex-direction:column; gap:8px; }
+.btn-cancel { background:none; border:none; font-size:13px; color:var(--text-3); cursor:pointer; text-align:center; padding:8px; }
+.btn-cancel:hover { color:var(--text-2); }
+.feedback-bar { text-align:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--line); }
+.feedback-bar a { font-size:12.5px; color:var(--text-3); text-decoration:none; }
+.feedback-bar a:hover { color:var(--text-2); }
+@keyframes up { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes pulse { 0%,100% { box-shadow:0 0 0 0 rgba(232,105,74,0.4); } 50% { box-shadow:0 0 0 6px rgba(232,105,74,0); } }
 </style>
 </head>
 <body>
@@ -323,11 +128,10 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
 
   <div class="brand">
     <div class="brand-dot"></div>
-    <div class="brand-name">MayaVizs - </div>
-    <h3>Your Personal Guided Audio Sessions</h3>
+    <div class="brand-name">MayaVizs</div>
   </div>
 
-  <!-- User bar (shown when logged in) -->
+  <!-- User bar -->
   <div class="user-bar" id="userBar">
     <div>
       <div class="user-email" id="userEmail"></div>
@@ -335,12 +139,12 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
       <span class="user-plan" id="userPlan">Free</span>
-      <button id="upgradeNavBtn" onclick="showPaymentModal()" style="display:none;background:var(--coral);color:#fff;border:none;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;cursor:pointer;">Upgrade</button>
+      <button class="btn-upgrade-nav" id="upgradeNavBtn" onclick="showPaymentModal()" style="display:none;">Upgrade</button>
       <button class="btn-logout" onclick="logout()">Log out</button>
     </div>
   </div>
 
-  <!-- Login screen -->
+  <!-- Login -->
   <div class="screen active" id="screenLogin">
     <div class="screen-title">Welcome back</div>
     <div class="screen-sub">Log in to generate your personalized guided session.</div>
@@ -353,14 +157,14 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
       <label class="field-label">Password</label>
       <input type="password" id="loginPassword" placeholder="Your password"/>
     </div>
-    <div style="text-align:right; margin-bottom:14px; margin-top:-6px;">
-      <a onclick="showScreen('screenForgot')" style="font-size:12.5px; color:var(--coral); cursor:pointer;">Forgot password?</a>
+    <div style="text-align:right;margin-bottom:14px;margin-top:-6px;">
+      <a onclick="showScreen('screenForgot')" style="font-size:12.5px;color:var(--coral);cursor:pointer;">Forgot password?</a>
     </div>
     <button class="btn btn-coral" id="loginBtn" onclick="doLogin()">Log in</button>
-    <div class="auth-switch">Don't have an account? <a onclick="showScreen('screenSignup')">Sign up for free</a></div>
+    <div class="auth-switch">Don't have an account? <a onclick="showScreen('screenSignup')">Sign up free</a></div>
   </div>
 
-  <!-- Forgot password screen -->
+  <!-- Forgot password -->
   <div class="screen" id="screenForgot">
     <div class="screen-title">Reset your password</div>
     <div class="screen-sub">Enter your email and we'll send you a reset link.</div>
@@ -374,7 +178,7 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     <div class="auth-switch"><a onclick="showScreen('screenLogin')">← Back to login</a></div>
   </div>
 
-  <!-- Reset password screen (shown after clicking email link) -->
+  <!-- Reset password -->
   <div class="screen" id="screenReset">
     <div class="screen-title">Set new password</div>
     <div class="screen-sub">Enter your new password below.</div>
@@ -391,7 +195,7 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     <button class="btn btn-coral" id="resetBtn" onclick="doResetPassword()" style="margin-top:6px;">Update password</button>
   </div>
 
-  <!-- Signup screen -->
+  <!-- Signup -->
   <div class="screen" id="screenSignup">
     <div class="screen-title">Create your account</div>
     <div class="screen-sub">Get 5 free sessions to start — no credit card needed.</div>
@@ -409,52 +213,47 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     <div class="auth-switch">Already have an account? <a onclick="showScreen('screenLogin')">Log in</a></div>
   </div>
 
-  <!-- Generator screen -->
+  <!-- App -->
   <div class="screen" id="screenApp">
 
     <div class="block">
       <div class="label">Your intention</div>
       <textarea id="goalInput" placeholder="Describe what you are going through or what you would like to work on. The more specific you are, the more personal your session will feel."></textarea>
- <!--    <select id="focusArea">
-  <optgroup label="Calm & Wellbeing">
-    <option value="anxiety">Anxiety & stress relief</option>
-    <option value="sleep">Sleep & rest</option>
-    <option value="focus">Focus & mental clarity</option>
-  </optgroup>
-  <optgroup label="Emotional Healing">
-    <option value="healing">Emotional healing</option>
-    <option value="grief">Grief & loss</option>
-    <option value="anger">Anger & frustration</option>
-    <option value="self_love">Self-love & acceptance</option>
-  </optgroup>
-  <optgroup label="Growth & Purpose">
-    <option value="confidence">Confidence & self-belief</option>
-    <option value="goal">Goals & motivation</option>
-    <option value="burnout">Burnout & exhaustion</option>
-  </optgroup>
-  <optgroup label="Relationships & Self">
-    <option value="relationships">Relationships & connection</option>
-    <option value="boundaries">Boundaries & self-respect</option>
-  </optgroup>
-</select> -->
     </div>
 
     <div class="block">
-      <div class="label">Voice &amp; length</div>
-      <div class="row-2">
+      <div class="label">Voice, language &amp; length</div>
+      <div class="row-3">
         <select id="voiceSelect">
-          <option value="nova">Nova — warm &amp; friendly</option>
-          <option value="shimmer">Shimmer — gentle &amp; soft</option>
-          <option value="alloy">Alloy — clear &amp; balanced</option>
-          <option value="echo">Echo — calm &amp; grounded</option>
-          <option value="onyx">Onyx — deep &amp; authoritative</option>
-          <option value="fable">Fable — warm &amp; storytelling</option>
+          <optgroup label="Female">
+            <option value="pooja">Pooja — warm</option>
+            <option value="anushka">Anushka — gentle</option>
+            <option value="priya">Priya — soft</option>
+            <option value="kavya">Kavya — expressive</option>
+            <option value="ishita">Ishita — clear</option>
+          </optgroup>
+          <optgroup label="Male">
+            <option value="kabir">Kabir — grounded</option>
+            <option value="aditya">Aditya — calm</option>
+            <option value="rahul">Rahul — friendly</option>
+          </optgroup>
+        </select>
+        <select id="languageSelect">
+          <option value="en-IN">English</option>
+          <option value="hi-IN">Hindi — हिंदी</option>
+          <option value="ta-IN">Tamil — தமிழ்</option>
+          <option value="te-IN">Telugu — తెలుగు</option>
+          <option value="kn-IN">Kannada — ಕನ್ನಡ</option>
+          <option value="ml-IN">Malayalam — മലയാളം</option>
+          <option value="bn-IN">Bengali — বাংলা</option>
+          <option value="mr-IN">Marathi — मराठी</option>
+          <option value="gu-IN">Gujarati — ગુજરાતી</option>
         </select>
         <select id="durationSelect">
-          <option value="3"><3 minutes</option>
-          <option value="5" selected>3-5 minutes</option>
-          <option value="10">5-10 minutes</option>
-          <option value="15">10-15 minutes</option>
+          <option value="3">3 minutes</option>
+          <option value="5" selected>5 minutes</option>
+          <option value="10">10 minutes</option>
+          <option value="15">15 minutes</option>
         </select>
       </div>
     </div>
@@ -469,27 +268,24 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
           <div class="s-icon" id="si1">1</div>
           <div class="s-text">
             <div class="s-name">Writing your script</div>
-            <div class="s-note" id="sn1">Maya is personalizing your session…</div>
+            <div class="s-note" id="sn1">GPT-4o-mini is personalizing your session…</div>
           </div>
         </div>
         <div class="step" id="s2">
           <div class="s-icon" id="si2">2</div>
           <div class="s-text">
             <div class="s-name">Synthesizing voice</div>
-            <div class="s-note" id="sn2">Maya is generating your audio…</div>
+            <div class="s-note" id="sn2">Sarvam AI is generating your audio…</div>
           </div>
         </div>
       </div>
       <div class="err-box" id="errBox"></div>
-     <div class="upgrade-box" id="upgradeBox">
-  <p id="upgradeMsg">You've used your free session. Upgrade to MayaVizs Plus for 30 sessions/month.</p>
-  <button class="btn-upgrade" onclick="showPaymentModal()">Upgrade — ₹299/month</button>
-</div>
-<div class="upgrade-box" id="upgradeBox">
-        <p id="upgradeMsg">You've used all your free sessions. Upgrade to MayaVizs Plus for 30 sessions/month.</p>
+      <div class="upgrade-box" id="upgradeBox">
+        <p id="upgradeMsg">You have used all your free sessions. Upgrade to MayaVizs Plus for 30 sessions/month.</p>
         <button class="btn-upgrade" onclick="showPaymentModal()">Upgrade — ₹299/month</button>
       </div>
     </div>
+
     <!-- Result -->
     <div class="result" id="resultWrap">
       <div class="result-top">
@@ -500,18 +296,20 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
         </div>
       </div>
       <audio controls id="player"></audio>
-      <p id="downloadNote" style="display:none;font-size:12px;color:var(--text-3);text-align:center;margin-bottom:10px;">
-      🔒 Download available on <a onclick="showPaymentModal()" style="color:var(--coral);cursor:pointer;font-weight:500;">MayaVizs Plus</a>
+      <p class="download-note" id="downloadNote">
+        🔒 Download available on <a onclick="showPaymentModal()" style="color:var(--coral);cursor:pointer;font-weight:500;">MayaVizs Plus</a>
       </p>
       <div class="result-actions">
-        <a class="btn-dl" id="dlBtn" download="mayavizs-session.mp3">↓ Download audio</a>
+        <a class="btn-dl" id="dlBtn" download="mayavizs-session.mp3" style="display:none;">↓ Download audio</a>
         <button class="btn-new" onclick="resetGen()">← Start over</button>
       </div>
     </div>
 
-  </div>
-   <div style="text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid var(--line);">
-    <a href="https://forms.gle/P7PEYtro4ceJrYbr6" target="_blank" style="font-size:12.5px;color:var(--text-3);text-decoration:none;font-family:'Inter',sans-serif;font-weight:400;">Share your feedback →</a>
+    <!-- Feedback -->
+    <div class="feedback-bar">
+      <a href="https://forms.gle/P7PEYtro4ceJrYbr6" target="_blank">Share your feedback →</a>
+    </div>
+
   </div>
 </div>
 
@@ -519,12 +317,13 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
 <div class="modal-overlay" id="paymentModal">
   <div class="modal">
     <h3>Upgrade to Plus</h3>
-    <p>Get 30 sessions every month and full access to all voices and session lengths.</p>
+    <p>Get 30 sessions every month, all voices, all languages, and MP3 download.</p>
     <div class="plan-box">
       <div class="plan-price">₹299<span>/month</span></div>
       <ul class="plan-features">
         <li>30 sessions per month</li>
-        <li>All voices &amp; durations</li>
+        <li>All 8 voices</li>
+        <li>All 9 Indian languages</li>
         <li>Download as MP3</li>
         <li>Cancel anytime</li>
       </ul>
@@ -539,18 +338,12 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-  // ── Replace with your Render backend URL ──
   const BACKEND = "https://mayavizs.onrender.com";
 
-  // ── State ──────────────────────────────────────────────────────
   let authToken = localStorage.getItem("maya_token") || null;
   let userData  = null;
 
-  // ── Init ───────────────────────────────────────────────────────
-  
-
- 
-// Check for password reset token IMMEDIATELY
+  // ── Check for password reset token immediately ──────────────────
   (function() {
     const hash = window.location.hash;
     if (!hash) return;
@@ -570,61 +363,35 @@ audio { width: 100%; border-radius: 8px; display: block; margin-bottom: 14px; }
     else showScreen("screenLogin");
   });
 
-  // ── Screen management ──────────────────────────────────────────
+  // ── Screen management ───────────────────────────────────────────
   function showScreen(id) {
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     document.getElementById(id).classList.add("active");
   }
 
-  // ── User bar ───────────────────────────────────────────────────
-function updateUserBar(data) {
+  // ── User bar ────────────────────────────────────────────────────
+  function updateUserBar(data) {
     userData = data;
     document.getElementById("userBar").classList.add("show");
     document.getElementById("userEmail").textContent = data.email;
     document.getElementById("userUsage").textContent = `${data.sessions_used} / ${data.sessions_limit} sessions used this month`;
-    const planEl = document.getElementById("userPlan");
-    planEl.textContent = data.plan === "paid" ? "Plus ✓" : "Free";
-    planEl.className   = "user-plan" + (data.plan === "paid" ? " paid" : "");
-    document.getElementById("upgradeNavBtn").style.display = data.plan === "paid" ? "none" : "inline-block";
-    document.getElementById("dlBtn").style.display = data.plan === "paid" ? "flex" : "none";
-    document.getElementById("downloadNote").style.display = data.plan === "paid" ? "none" : "block";
-  
-  // Restrict options for free users
-const isPaid = data.plan === "paid";
-/* <const focusSelect = document.getElementById("focusArea"); 
-Array.from(focusSelect.options).forEach(opt => {
-  const freeOptions = ["anxiety", "sleep"];
-  if (!freeOptions.includes(opt.value) && opt.value !== "") {
-    opt.disabled = !isPaid;
-    opt.text = (!isPaid && opt.value !== "" && !freeOptions.includes(opt.value))
-      ? opt.text.replace(" 🔒", "") + " 🔒"
-      : opt.text.replace(" 🔒", "");
-  }
-});
-*/
 
-// Restrict voice for free users
-const voiceSelect = document.getElementById("voiceSelect");
-Array.from(voiceSelect.options).forEach(opt => {
-  if (opt.value !== "nova") {
-    opt.disabled = !isPaid;
-    opt.text = !isPaid
-      ? opt.text.replace(" 🔒", "") + " 🔒"
-      : opt.text.replace(" 🔒", "");
-  }
-});
+    const planEl  = document.getElementById("userPlan");
+    const isPaid  = data.plan === "paid";
+    planEl.textContent = isPaid ? "Plus ✓" : "Free";
+    planEl.className   = "user-plan" + (isPaid ? " paid" : "");
 
-// Reset to allowed option if current selection is restricted
-/*if (!isPaid) {
-  if (!["anxiety", "sleep"].includes(focusSelect.value)) {
-    focusSelect.value = "anxiety";
-  }
-  voiceSelect.value = "nova";
-}*/
-    // Show upgrade box immediately if sessions are used up
-    if (data.sessions_used >= data.sessions_limit && data.plan === "free") {
+    // Upgrade button — show for free users only
+    document.getElementById("upgradeNavBtn").style.display = isPaid ? "none" : "inline-block";
+
+    // Download button — show for paid users only
+    document.getElementById("dlBtn").style.display        = isPaid ? "flex" : "none";
+    document.getElementById("downloadNote").style.display = isPaid ? "none" : "block";
+
+    // Show upgrade box immediately if sessions exhausted
+    if (!isPaid && data.sessions_used >= data.sessions_limit) {
       document.getElementById("progressWrap").classList.add("show");
-      document.getElementById("upgradeMsg").textContent = "You've used all your free sessions. Upgrade to MayaVizs Plus for 30 sessions/month.";
+      document.getElementById("upgradeMsg").textContent = "You have used all your free sessions. Upgrade to MayaVizs Plus for 30 sessions/month.";
       document.getElementById("upgradeBox").classList.add("show");
       document.getElementById("genBtn").disabled = true;
     } else {
@@ -632,6 +399,30 @@ Array.from(voiceSelect.options).forEach(opt => {
       document.getElementById("upgradeBox").classList.remove("show");
       document.getElementById("genBtn").disabled = false;
     }
+
+    // Voice restrictions for free users
+    const voiceSelect = document.getElementById("voiceSelect");
+    Array.from(voiceSelect.options).forEach(opt => {
+      if (opt.value !== "pooja") {
+        opt.disabled = !isPaid;
+        opt.text = !isPaid
+          ? opt.text.replace(" 🔒", "") + " 🔒"
+          : opt.text.replace(" 🔒", "");
+      }
+    });
+    if (!isPaid) voiceSelect.value = "pooja";
+
+    // Language restrictions for free users
+    const langSelect = document.getElementById("languageSelect");
+    Array.from(langSelect.options).forEach(opt => {
+      if (opt.value !== "en-IN") {
+        opt.disabled = !isPaid;
+        opt.text = !isPaid
+          ? opt.text.replace(" 🔒", "") + " 🔒"
+          : opt.text.replace(" 🔒", "");
+      }
+    });
+    if (!isPaid) langSelect.value = "en-IN";
   }
 
   async function loadUser() {
@@ -644,39 +435,32 @@ Array.from(voiceSelect.options).forEach(opt => {
         updateUserBar(data);
         showScreen("screenApp");
       } else {
-        logout();
+        localStorage.removeItem("maya_token");
+        authToken = null;
+        showScreen("screenLogin");
       }
-    } catch { logout(); }
+    } catch { showScreen("screenLogin"); }
   }
 
-  // ── Auth ───────────────────────────────────────────────────────
+  // ── Auth ────────────────────────────────────────────────────────
   async function doLogin() {
     const email    = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
     const errEl    = document.getElementById("loginErr");
     const btn      = document.getElementById("loginBtn");
-
     errEl.classList.remove("show");
     if (!email || !password) { showMsg(errEl, "Please enter your email and password."); return; }
-
     btn.disabled = true; btn.textContent = "Logging in…";
-
     try {
-      const res  = await fetch(`${BACKEND}/auth/login`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const res  = await fetch(`${BACKEND}/auth/login`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ email, password }) });
       const data = await res.json();
       if (res.ok) {
         authToken = data.token;
         localStorage.setItem("maya_token", authToken);
         updateUserBar(data);
         showScreen("screenApp");
-      } else {
-        showMsg(errEl, data.error || "Login failed.");
-      }
+      } else { showMsg(errEl, data.error || "Login failed."); }
     } catch { showMsg(errEl, "Could not reach server. Please try again."); }
-
     btn.disabled = false; btn.textContent = "Log in";
   }
 
@@ -686,26 +470,17 @@ Array.from(voiceSelect.options).forEach(opt => {
     const errEl    = document.getElementById("signupErr");
     const okEl     = document.getElementById("signupOk");
     const btn      = document.getElementById("signupBtn");
-
     errEl.classList.remove("show"); okEl.classList.remove("show");
     if (!email || !password) { showMsg(errEl, "Please enter your email and password."); return; }
-
     btn.disabled = true; btn.textContent = "Creating account…";
-
     try {
-      const res  = await fetch(`${BACKEND}/auth/signup`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const res  = await fetch(`${BACKEND}/auth/signup`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ email, password }) });
       const data = await res.json();
       if (res.ok) {
         showMsg(okEl, "Account created! Please check your email to verify, then log in.");
         setTimeout(() => showScreen("screenLogin"), 2500);
-      } else {
-        showMsg(errEl, data.error || "Sign up failed.");
-      }
+      } else { showMsg(errEl, data.error || "Sign up failed."); }
     } catch { showMsg(errEl, "Could not reach server. Please try again."); }
-
     btn.disabled = false; btn.textContent = "Create account";
   }
 
@@ -714,25 +489,15 @@ Array.from(voiceSelect.options).forEach(opt => {
     const errEl = document.getElementById("forgotErr");
     const okEl  = document.getElementById("forgotOk");
     const btn   = document.getElementById("forgotBtn");
-
     errEl.classList.remove("show"); okEl.classList.remove("show");
     if (!email) { showMsg(errEl, "Please enter your email address."); return; }
-
     btn.disabled = true; btn.textContent = "Sending…";
-
     try {
-      const res  = await fetch(`${BACKEND}/auth/forgot-password`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      const res  = await fetch(`${BACKEND}/auth/forgot-password`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ email }) });
       const data = await res.json();
-      if (res.ok) {
-        showMsg(okEl, "Reset link sent! Check your inbox and follow the link.");
-      } else {
-        showMsg(errEl, data.error || "Could not send reset email.");
-      }
+      if (res.ok) { showMsg(okEl, "Reset link sent! Check your inbox and follow the link."); }
+      else { showMsg(errEl, data.error || "Could not send reset email."); }
     } catch { showMsg(errEl, "Could not reach server. Please try again."); }
-
     btn.disabled = false; btn.textContent = "Send reset link";
   }
 
@@ -742,31 +507,21 @@ Array.from(voiceSelect.options).forEach(opt => {
     const errEl     = document.getElementById("resetErr");
     const okEl      = document.getElementById("resetOk");
     const btn       = document.getElementById("resetBtn");
-
     errEl.classList.remove("show"); okEl.classList.remove("show");
-
     if (!password)              { showMsg(errEl, "Please enter a new password."); return; }
     if (password.length < 6)    { showMsg(errEl, "Password must be at least 6 characters."); return; }
     if (password !== password2) { showMsg(errEl, "Passwords do not match."); return; }
     if (!window._recoveryToken) { showMsg(errEl, "Invalid reset link. Please request a new one."); return; }
-
     btn.disabled = true; btn.textContent = "Updating…";
-
     try {
-      const res  = await fetch(`${BACKEND}/auth/reset-password`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: window._recoveryToken, password }),
-      });
+      const res  = await fetch(`${BACKEND}/auth/reset-password`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ token: window._recoveryToken, password }) });
       const data = await res.json();
       if (res.ok) {
         showMsg(okEl, "Password updated! Redirecting to login…");
         window._recoveryToken = null;
-        setTimeout(() => { window.location.hash = ""; showScreen("screenLogin"); }, 2000);
-      } else {
-        showMsg(errEl, data.error || "Could not update password.");
-      }
+        setTimeout(() => showScreen("screenLogin"), 2000);
+      } else { showMsg(errEl, data.error || "Could not update password."); }
     } catch { showMsg(errEl, "Could not reach server. Please try again."); }
-
     btn.disabled = false; btn.textContent = "Update password";
   }
 
@@ -777,11 +532,9 @@ Array.from(voiceSelect.options).forEach(opt => {
     showScreen("screenLogin");
   }
 
-  function showMsg(el, msg) {
-    el.textContent = msg; el.classList.add("show");
-  }
+  function showMsg(el, msg) { el.textContent = msg; el.classList.add("show"); }
 
-  // ── Generator ──────────────────────────────────────────────────
+  // ── Generator ───────────────────────────────────────────────────
   const ICONS = { 1:'1', 2:'2' };
 
   function stepFn(n, state, note) {
@@ -810,8 +563,8 @@ Array.from(voiceSelect.options).forEach(opt => {
 
   async function generate() {
     const goal     = document.getElementById("goalInput").value.trim();
-   /* const focus    = document.getElementById("focusArea").value;*/
     const voice    = document.getElementById("voiceSelect").value;
+    const language = document.getElementById("languageSelect").value;
     const duration = parseInt(document.getElementById("durationSelect").value);
 
     if (!goal || goal.length < 15) {
@@ -825,14 +578,14 @@ Array.from(voiceSelect.options).forEach(opt => {
     document.getElementById("upgradeBox").classList.remove("show");
     [1,2].forEach(n => stepFn(n, '', ''));
 
-    stepFn(1, 'active', 'Maya is writing your session…');
+    stepFn(1, 'active', 'GPT-4o-mini is writing your session…');
     await sleep(300);
     stepFn(2, 'active', 'Queued…');
 
     const timers = [
       setTimeout(() => stepFn(1, 'active', 'Writing your grounding sequence…'), 3000),
       setTimeout(() => stepFn(1, 'active', 'Crafting the core visualization…'), 7000),
-      setTimeout(() => { stepFn(1,'done','Done'); stepFn(2,'active','Maya is rendering your voice…'); }, 11000),
+      setTimeout(() => { stepFn(1,'done','Done'); stepFn(2,'active','Sarvam AI rendering your voice…'); }, 11000),
       setTimeout(() => stepFn(2, 'active', 'Voice almost ready…'), 20000),
     ];
 
@@ -840,18 +593,17 @@ Array.from(voiceSelect.options).forEach(opt => {
       const res = await fetch(`${BACKEND}/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
-        body: JSON.stringify({ goal, voice, duration }),
+        body: JSON.stringify({ goal, voice, duration, language }),
       });
 
       timers.forEach(clearTimeout);
 
-      if (res.status === 401) {
-        logout(); return;
-      }
+      if (res.status === 401) { logout(); return; }
 
       if (res.status === 403) {
         const data = await res.json();
         [1,2].forEach(n => stepFn(n,'err',''));
+        document.getElementById("progressWrap").classList.add("show");
         showErr(data.error, data.upgrade_required);
         return;
       }
@@ -869,11 +621,9 @@ Array.from(voiceSelect.options).forEach(opt => {
       const url  = URL.createObjectURL(blob);
       document.getElementById("player").src = url;
       document.getElementById("dlBtn").href = url;
-      document.getElementById("dlBtn").style.display = userData && userData.plan === "paid" ? "flex" : "none";
       document.getElementById("resultSub").textContent =
-        `${duration}-minute personalized session · ready to play or download`;
+        `${duration}-minute personalized session · ready to play`;
 
-      // Refresh usage count
       loadUser();
 
       document.getElementById("progressWrap").classList.remove("show");
@@ -899,7 +649,7 @@ Array.from(voiceSelect.options).forEach(opt => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // ── Payment ────────────────────────────────────────────────────
+  // ── Payment ─────────────────────────────────────────────────────
   function showPaymentModal() { document.getElementById("paymentModal").classList.add("show"); }
   function hidePaymentModal() { document.getElementById("paymentModal").classList.remove("show"); }
 
@@ -908,47 +658,24 @@ Array.from(voiceSelect.options).forEach(opt => {
     const errEl = document.getElementById("payErr");
     errEl.classList.remove("show");
     btn.disabled = true; btn.textContent = "Loading…";
-
     try {
-      const res  = await fetch(`${BACKEND}/payment/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
-      });
+      const res   = await fetch(`${BACKEND}/payment/create-order`, { method:"POST", headers:{"Content-Type":"application/json","Authorization":`Bearer ${authToken}`} });
       const order = await res.json();
-
       if (!res.ok) { showMsg(errEl, order.error || "Could not create order."); btn.disabled = false; btn.textContent = "Pay ₹299 with Razorpay"; return; }
-
       const options = {
-        key:         order.key_id,
-        amount:      order.amount,
-        currency:    order.currency,
-        name:        "MayaVizs",
-        description: "MayaVizs Plus — 30 sessions/month",
-        order_id:    order.order_id,
-        prefill:     { email: order.user_email },
-        theme:       { color: "#e8694a" },
+        key: order.key_id, amount: order.amount, currency: order.currency,
+        name: "MayaVizs", description: "MayaVizs Plus — 30 sessions/month",
+        order_id: order.order_id, prefill: { email: order.user_email },
+        theme: { color: "#e8694a" },
         handler: async (response) => {
-          // Verify payment
-          const verRes = await fetch(`${BACKEND}/payment/verify`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
-            body: JSON.stringify(response),
-          });
+          const verRes  = await fetch(`${BACKEND}/payment/verify`, { method:"POST", headers:{"Content-Type":"application/json","Authorization":`Bearer ${authToken}`}, body:JSON.stringify(response) });
           const verData = await verRes.json();
-          if (verRes.ok) {
-            hidePaymentModal();
-            await loadUser();
-            alert("🎉 Welcome to MayaVizs Plus! You now have 30 sessions this month.");
-          } else {
-            showMsg(errEl, verData.error || "Payment verification failed. Contact support.");
-          }
+          if (verRes.ok) { hidePaymentModal(); await loadUser(); alert("Welcome to MayaVizs Plus! You now have 30 sessions this month."); }
+          else { showMsg(errEl, verData.error || "Payment verification failed. Contact support."); }
         },
         modal: { ondismiss: () => { btn.disabled = false; btn.textContent = "Pay ₹299 with Razorpay"; } },
       };
-
-      const rzp = new Razorpay(options);
-      rzp.open();
-
+      new Razorpay(options).open();
     } catch(e) {
       showMsg(errEl, `Could not load payment. (${e.message})`);
       btn.disabled = false; btn.textContent = "Pay ₹299 with Razorpay";
