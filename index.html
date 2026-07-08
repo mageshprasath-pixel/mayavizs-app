@@ -224,13 +224,13 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
     <div class="block">
       <div class="label">Voice, language &amp; length</div>
       <div class="row-3">
-        <select id="voiceSelect">
+       <select id="voiceSelect">
           <optgroup label="Female">
-            <option value="pooja">Pooja — warm</option>
-            <option value="anushka">Anushka — gentle</option>
             <option value="priya">Priya — soft</option>
             <option value="kavya">Kavya — expressive</option>
             <option value="ishita">Ishita — clear</option>
+            <option value="neha">Neha — warm</option>
+            <option value="pooja">Pooja — gentle</option>
           </optgroup>
           <optgroup label="Male">
             <option value="kabir">Kabir — grounded</option>
@@ -410,7 +410,7 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
           : opt.text.replace(" 🔒", "");
       }
     });
-    if (!isPaid) voiceSelect.value = "pooja";
+    if (!isPaid) voiceSelect.value = "priya";
 
     // Language restrictions for free users
     const langSelect = document.getElementById("languageSelect");
