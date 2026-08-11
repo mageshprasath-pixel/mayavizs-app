@@ -224,18 +224,17 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
     <div class="block">
       <div class="label">Voice, language &amp; length</div>
       <div class="row-3">
-       <select id="voiceSelect">
+        <!-- OpenAI TTS voices — nova is free, rest are Plus only -->
+        <select id="voiceSelect">
           <optgroup label="Female">
-            <option value="priya">Priya — soft</option>
-            <option value="kavya">Kavya — expressive</option>
-            <option value="ishita">Ishita — clear</option>
-            <option value="neha">Neha — warm</option>
-            <option value="pooja">Pooja — gentle</option>
+            <option value="nova">Nova — warm</option>
+            <option value="shimmer">Shimmer — gentle</option>
+            <option value="fable">Fable — expressive</option>
+            <option value="alloy">Alloy — clear</option>
           </optgroup>
           <optgroup label="Male">
-            <option value="kabir">Kabir — grounded</option>
-            <option value="aditya">Aditya — calm</option>
-            <option value="rahul">Rahul — friendly</option>
+            <option value="onyx">Onyx — deep</option>
+            <option value="echo">Echo — calm</option>
           </optgroup>
         </select>
         <select id="languageSelect">
@@ -268,14 +267,14 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
           <div class="s-icon" id="si1">1</div>
           <div class="s-text">
             <div class="s-name">Writing your script</div>
-            <div class="s-note" id="sn1">MayaVizs is personalizing your session…</div>
+            <div class="s-note" id="sn1">GPT-4o-mini is personalizing your session…</div>
           </div>
         </div>
         <div class="step" id="s2">
           <div class="s-icon" id="si2">2</div>
           <div class="s-text">
             <div class="s-name">Synthesizing voice</div>
-            <div class="s-note" id="sn2">MayaVizs is generating your audio…</div>
+            <div class="s-note" id="sn2">OpenAI TTS is generating your audio…</div>
           </div>
         </div>
       </div>
@@ -322,7 +321,7 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
       <div class="plan-price">₹299<span>/month</span></div>
       <ul class="plan-features">
         <li>30 sessions per month</li>
-        <li>All 8 voices</li>
+        <li>All 6 voices</li>
         <li>All 9 Indian languages</li>
         <li>Download as MP3</li>
         <li>Cancel anytime</li>
@@ -339,6 +338,10 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
   const BACKEND = "https://mayavizs.onrender.com";
+
+  // Free tier defaults — must match backend FREE_VOICE and FREE_LANGUAGE
+  const FREE_VOICE    = "nova";
+  const FREE_LANGUAGE = "en-IN";
 
   let authToken = localStorage.getItem("maya_token") || null;
   let userData  = null;
@@ -374,10 +377,11 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
     userData = data;
     document.getElementById("userBar").classList.add("show");
     document.getElementById("userEmail").textContent = data.email;
-    document.getElementById("userUsage").textContent = `${data.sessions_used} / ${data.sessions_limit} sessions used this month`;
+    document.getElementById("userUsage").textContent =
+      `${data.sessions_used} / ${data.sessions_limit} sessions used this month`;
 
-    const planEl  = document.getElementById("userPlan");
-    const isPaid  = data.plan === "paid";
+    const planEl = document.getElementById("userPlan");
+    const isPaid = data.plan === "paid";
     planEl.textContent = isPaid ? "Plus ✓" : "Free";
     planEl.className   = "user-plan" + (isPaid ? " paid" : "");
 
@@ -391,7 +395,8 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
     // Show upgrade box immediately if sessions exhausted
     if (!isPaid && data.sessions_used >= data.sessions_limit) {
       document.getElementById("progressWrap").classList.add("show");
-      document.getElementById("upgradeMsg").textContent = "You have used all your free sessions. Upgrade to MayaVizs Plus for 30 sessions/month.";
+      document.getElementById("upgradeMsg").textContent =
+        "You have used all your free sessions. Upgrade to MayaVizs Plus for 30 sessions/month.";
       document.getElementById("upgradeBox").classList.add("show");
       document.getElementById("genBtn").disabled = true;
     } else {
@@ -400,29 +405,27 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
       document.getElementById("genBtn").disabled = false;
     }
 
-    // Voice restrictions for free users
+    // Voice restrictions — nova is free, all others are Plus only
     const voiceSelect = document.getElementById("voiceSelect");
     Array.from(voiceSelect.options).forEach(opt => {
-      if (opt.value !== "pooja") {
+      if (opt.value !== FREE_VOICE) {
         opt.disabled = !isPaid;
-        opt.text = !isPaid
-          ? opt.text.replace(" 🔒", "") + " 🔒"
-          : opt.text.replace(" 🔒", "");
+        if (!isPaid && !opt.text.includes("🔒")) opt.text += " 🔒";
+        if (isPaid)  opt.text = opt.text.replace(" 🔒", "");
       }
     });
-    if (!isPaid) voiceSelect.value = "priya";
+    if (!isPaid) voiceSelect.value = FREE_VOICE;
 
-    // Language restrictions for free users
+    // Language restrictions — English is free, all others are Plus only
     const langSelect = document.getElementById("languageSelect");
     Array.from(langSelect.options).forEach(opt => {
-      if (opt.value !== "en-IN") {
+      if (opt.value !== FREE_LANGUAGE) {
         opt.disabled = !isPaid;
-        opt.text = !isPaid
-          ? opt.text.replace(" 🔒", "") + " 🔒"
-          : opt.text.replace(" 🔒", "");
+        if (!isPaid && !opt.text.includes("🔒")) opt.text += " 🔒";
+        if (isPaid)  opt.text = opt.text.replace(" 🔒", "");
       }
     });
-    if (!isPaid) langSelect.value = "en-IN";
+    if (!isPaid) langSelect.value = FREE_LANGUAGE;
   }
 
   async function loadUser() {
@@ -452,7 +455,10 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
     if (!email || !password) { showMsg(errEl, "Please enter your email and password."); return; }
     btn.disabled = true; btn.textContent = "Logging in…";
     try {
-      const res  = await fetch(`${BACKEND}/auth/login`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ email, password }) });
+      const res  = await fetch(`${BACKEND}/auth/login`, {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ email, password })
+      });
       const data = await res.json();
       if (res.ok) {
         authToken = data.token;
@@ -474,7 +480,10 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
     if (!email || !password) { showMsg(errEl, "Please enter your email and password."); return; }
     btn.disabled = true; btn.textContent = "Creating account…";
     try {
-      const res  = await fetch(`${BACKEND}/auth/signup`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ email, password }) });
+      const res  = await fetch(`${BACKEND}/auth/signup`, {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ email, password })
+      });
       const data = await res.json();
       if (res.ok) {
         showMsg(okEl, "Account created! Please check your email to verify, then log in.");
@@ -493,7 +502,10 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
     if (!email) { showMsg(errEl, "Please enter your email address."); return; }
     btn.disabled = true; btn.textContent = "Sending…";
     try {
-      const res  = await fetch(`${BACKEND}/auth/forgot-password`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ email }) });
+      const res  = await fetch(`${BACKEND}/auth/forgot-password`, {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ email })
+      });
       const data = await res.json();
       if (res.ok) { showMsg(okEl, "Reset link sent! Check your inbox and follow the link."); }
       else { showMsg(errEl, data.error || "Could not send reset email."); }
@@ -514,7 +526,10 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
     if (!window._recoveryToken) { showMsg(errEl, "Invalid reset link. Please request a new one."); return; }
     btn.disabled = true; btn.textContent = "Updating…";
     try {
-      const res  = await fetch(`${BACKEND}/auth/reset-password`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ token: window._recoveryToken, password }) });
+      const res  = await fetch(`${BACKEND}/auth/reset-password`, {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ token: window._recoveryToken, password })
+      });
       const data = await res.json();
       if (res.ok) {
         showMsg(okEl, "Password updated! Redirecting to login…");
@@ -585,14 +600,17 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
     const timers = [
       setTimeout(() => stepFn(1, 'active', 'Writing your grounding sequence…'), 3000),
       setTimeout(() => stepFn(1, 'active', 'Crafting the core visualization…'), 7000),
-      setTimeout(() => { stepFn(1,'done','Done'); stepFn(2,'active','Sarvam AI rendering your voice…'); }, 11000),
+      setTimeout(() => { stepFn(1,'done','Done'); stepFn(2,'active','OpenAI TTS rendering your voice…'); }, 11000),
       setTimeout(() => stepFn(2, 'active', 'Voice almost ready…'), 20000),
     ];
 
     try {
       const res = await fetch(`${BACKEND}/generate`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        },
         body: JSON.stringify({ goal, voice, duration, language }),
       });
 
@@ -659,21 +677,42 @@ audio { width:100%; border-radius:8px; display:block; margin-bottom:14px; }
     errEl.classList.remove("show");
     btn.disabled = true; btn.textContent = "Loading…";
     try {
-      const res   = await fetch(`${BACKEND}/payment/create-order`, { method:"POST", headers:{"Content-Type":"application/json","Authorization":`Bearer ${authToken}`} });
+      const res   = await fetch(`${BACKEND}/payment/create-order`, {
+        method:"POST",
+        headers:{"Content-Type":"application/json","Authorization":`Bearer ${authToken}`}
+      });
       const order = await res.json();
-      if (!res.ok) { showMsg(errEl, order.error || "Could not create order."); btn.disabled = false; btn.textContent = "Pay ₹299 with Razorpay"; return; }
+      if (!res.ok) {
+        showMsg(errEl, order.error || "Could not create order.");
+        btn.disabled = false; btn.textContent = "Pay ₹299 with Razorpay"; return;
+      }
       const options = {
-        key: order.key_id, amount: order.amount, currency: order.currency,
-        name: "MayaVizs", description: "MayaVizs Plus — 30 sessions/month",
-        order_id: order.order_id, prefill: { email: order.user_email },
-        theme: { color: "#e8694a" },
+        key:         order.key_id,
+        amount:      order.amount,
+        currency:    order.currency,
+        name:        "MayaVizs",
+        description: "MayaVizs Plus — 30 sessions/month",
+        order_id:    order.order_id,
+        prefill:     { email: order.user_email },
+        theme:       { color: "#e8694a" },
         handler: async (response) => {
-          const verRes  = await fetch(`${BACKEND}/payment/verify`, { method:"POST", headers:{"Content-Type":"application/json","Authorization":`Bearer ${authToken}`}, body:JSON.stringify(response) });
+          const verRes  = await fetch(`${BACKEND}/payment/verify`, {
+            method:"POST",
+            headers:{"Content-Type":"application/json","Authorization":`Bearer ${authToken}`},
+            body:JSON.stringify(response)
+          });
           const verData = await verRes.json();
-          if (verRes.ok) { hidePaymentModal(); await loadUser(); alert("Welcome to MayaVizs Plus! You now have 30 sessions this month."); }
-          else { showMsg(errEl, verData.error || "Payment verification failed. Contact support."); }
+          if (verRes.ok) {
+            hidePaymentModal();
+            await loadUser();
+            alert("Welcome to MayaVizs Plus! You now have 30 sessions this month.");
+          } else {
+            showMsg(errEl, verData.error || "Payment verification failed. Contact support.");
+          }
         },
-        modal: { ondismiss: () => { btn.disabled = false; btn.textContent = "Pay ₹299 with Razorpay"; } },
+        modal: {
+          ondismiss: () => { btn.disabled = false; btn.textContent = "Pay ₹299 with Razorpay"; }
+        },
       };
       new Razorpay(options).open();
     } catch(e) {
